@@ -13,18 +13,14 @@ static size_t	word_count(const char *str, char c)
 			i++;
 		if (str[i])
 			count++;
-		if(single_quote(str, i))
-		{
-			i = single_quote(str, i);
+		if(single_quote(str, &i) || double_quote(str, &i))
 			continue;
-		}
-		else if(double_quote(str, i))
-		{
-			i = double_quote(str, i);
-			continue;
-		}
 		while (str[i] != c && str[i])
+		{
+			if(str[i] == '\'' || str[i] == '\"')
+					break;
 			i++;
+		}
 	}
 	return (count);
 }
@@ -61,12 +57,12 @@ char	**mod_split(const char *str, char c)
 		poscount = 0;
 		while (*str == c && *str)
 			str++;
-		if(single_quote_dup(&str, tokens, &j))
+		if(single_quote_dup(&str, tokens, &j) || double_quote_dup(&str, tokens, &j))
 			continue;
-		else if(double_quote_dup(&str, tokens, &j))
-			continue;
-		while (*str != c && *str)
-		{
+		while (*str && *str != c)
+		{	
+			if(*str == '\'' || *str == '\"')
+					break;
 			str++;
 			poscount++;
 		}

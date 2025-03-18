@@ -1,23 +1,25 @@
 #include "minishell.h"
 
-int	single_quote(const char *str, int i)
+int	single_quote(const char *str, int *i)
 {
 	int j;
 
-	if(str[i] == '\'')
+	if(str[(*i)] == '\'')
 	{
 		j = 1;
-		while(str[i + j] && str[i + j] != '\'')
+		while(str[(*i) + j] && str[(*i) + j] != '\'')
 			j++;
-		if(str[i + j] == '\'' && j != 1)
+		if(!str[(*i) + j])
+			no_closing_quote();
+		if(j != 1)
 		{
-			i = i + j + 1;
-			return(i);
+			*i = *i + j + 1;
+			return(1);
 		}
-		else if(str[i] == '\'' && str[i + j] == '\'')
+		else if(str[(*i)] == '\'' && str[(*i) + j] == '\'')
 		{
-			i += 2;
-			return(i);
+			(*i) += 2;
+			return(1);
 		}
 	}
 	return(0);
@@ -32,7 +34,7 @@ int	single_quote_dup(const char **str, char **tokens, int *j)
 		poscount = 1;
 		while(*(*str + poscount) && *(*str + poscount) != '\'')
 			poscount++;
-		if(*(*str + poscount) == '\'' && poscount != 1)
+		if(poscount != 1)
 		{
 			tokens[(*j)] = ft_substr(*str, 0, poscount + 1);
 			if(!tokens[(*j)++])
@@ -53,24 +55,26 @@ int	single_quote_dup(const char **str, char **tokens, int *j)
 	return(0);
 }
 
-int	double_quote(const char *str, int i)
+int	double_quote(const char *str, int *i)
 {
 	int j;
 
-	if(str[i] == '\"')
+	if(str[(*i)] == '\"')
 	{
 		j = 1;
-		while(str[i + j] && str[i + j] != '\"')
+		while(str[(*i) + j] && str[(*i) + j] != '\"')
 			j++;
-		if(str[i + j] == '\"' && j != 1)
+		if(!str[(*i) + j])
+			no_closing_quote();
+		if(j != 1)
 		{
-			i = i + j + 1;
-			return(i);
+			*i = *i + j + 1;
+			return(1);
 		}
-		else if(str[i] == '\"' && str[i + j] == '\"')
+		else if(str[(*i)] == '\"' && str[(*i) + j] == '\"')
 		{
-			i += 2;
-			return(i);
+			(*i) += 2;
+			return(1);
 		}
 	}
 	return(0);
@@ -85,7 +89,7 @@ int	double_quote_dup(const char **str, char **tokens, int *j)
 		poscount = 1;
 		while(*(*str + poscount) && *(*str + poscount) != '\"')
 			poscount++;
-		if(*(*str + poscount) == '\"' && poscount != 1)
+		if(poscount != 1)
 		{
 			tokens[(*j)] = ft_substr(*str, 0, poscount + 1);
 			if(!tokens[(*j)++])

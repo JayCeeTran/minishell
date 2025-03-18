@@ -10,7 +10,7 @@ char **reparse(char **cmd, t_data *data)
 	char *dest;
 	
 	(void)data;
-	i = 1;
+	i = 0;					//NEED TO HANDLE token[0]!
 	while(cmd[i])
 	{
 		j = 0;
@@ -21,10 +21,10 @@ char **reparse(char **cmd, t_data *data)
 				if(cmd[i][j] == '$')
 				{
 					dest = expand_var(cmd[i], &j, data);
+					if(!dest)
+						free_split_exit(cmd);
 					free(cmd[i]);
 					cmd[i] = dest;
-					printf("%s DEST\n", dest);
-					printf("%d JJJJ\n", j);
 				}	
 				j++;
 			}
@@ -43,7 +43,7 @@ char *expand_var(char *s, int *j, t_data *data)
 	i = 0;
 	(*j)++;
 	(void)data;
-	while(s[(*j)] && s[(*j)] != ' ' && s[(*j)] != '\"')
+	while(s[(*j)] && s[(*j)] != ' ' && s[(*j)] != '\"' && s[(*j)] != '$')
 		dest[i++] = s[(*j)++];
 	dest[i] = '\0';
 	val = getenv(dest);
@@ -62,6 +62,8 @@ char *new_string(char *s, char *val, int len)
 	int flag;
 
 	dest = malloc(ft_strlen(s) + (ft_strlen(val)));
+	if(!dest)
+		return(NULL);
 	i = 0;
 	j = 0;
 	flag = 0;

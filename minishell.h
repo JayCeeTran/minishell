@@ -20,10 +20,11 @@ typedef struct s_data{
 } t_data;
 
 int		ft_strcmp(char *s, char *s2);
+char	*ft_strjoin_3(char *s, char *s2, char *s3);
 char **mod_split(const char *str, char c);
-int		single_quote(const char *str, int i);
+int		single_quote(const char *str, int *i);
 int		single_quote_dup(const char **str, char **tokens, int *j);
-int		double_quote(const char *str, int i);
+int		double_quote(const char *str, int *i);
 int		double_quote_dup(const char **str, char **tokens, int *j);
 void	putstr_len(char *s, int fd, int len);
 void	parse_input(char *s, t_data *data);
@@ -41,12 +42,14 @@ void	echo_cmd(char **cmd);
 ***		Free Functions!!!
 **/
 
+void	free_split_exit(char **cmd);
 void	free_split(char **split);
 char	**free_tokens(char **arr, int j);
 /**
 ***		Error Functions!!!
 **/
 
-void	malloc_fail(char *s);
+void	err_msg_exit(char *s);
+void	no_closing_quote(void);
 
 #endif

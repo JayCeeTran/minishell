@@ -12,3 +12,9 @@ void	free_split(char **split)
 	}
 	free(split);
 }
+
+void	free_split_exit(char **cmd)
+{
+	free_split(cmd);
+	err_msg_exit("Error\nReparsing failed\n");
+}

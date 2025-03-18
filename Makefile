@@ -5,6 +5,7 @@ SRCS = minishell.c \
 	error_funcs.c \
 	free_functs.c \
 	ft_strcmp.c \
+	ft_strjoin_3.c \
 	modified_split.c \
 	modified_split_helpers.c \
 	parse_input.c \

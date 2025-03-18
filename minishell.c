@@ -1,5 +1,11 @@
 #include "minishell.h"
 
+void	sigint_handler(int sig)
+{
+	(void)sig;
+	write(1, "\nminishell> ", 12);
+}
+
 int	main(int ac, char **argv, char **env)
 {
 	char *input = NULL;
@@ -7,7 +13,8 @@ int	main(int ac, char **argv, char **env)
 	argv++;
 	t_data data;
 	data.env = env;
-
+	
+//	signal(SIGINT, sigint_handler);
 	while(1)
 	{
 		input = readline("minishell$ ");

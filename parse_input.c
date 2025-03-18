@@ -8,14 +8,14 @@ void	parse_input(char *s, t_data *data)
 
 	command = mod_split(s, ' ');
 	if(!command)
-		malloc_fail("Error\nMalloc failed.\n");
+		err_msg_exit("Error\nMalloc failed.\n");
 	reparse(command, data);
 	compare_inputs(command);
-	/*for(int i = 0; command[i]; i++)
+/*	for(int i = 0; command[i]; i++)
 	{
 		printf("%s\n", command[i]);
-	}*/
-
+	}
+*/
 }
 
 void	compare_inputs(char **command)
@@ -34,5 +34,5 @@ void	compare_inputs(char **command)
 		unset_cmd(command);
 	else if(ft_strcmp(command[0], "env") == 0);
 		env_cmd(commmad);
-*/
+*/  free_split(command);
 }

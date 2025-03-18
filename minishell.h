@@ -29,7 +29,6 @@ void	putstr_len(char *s, int fd, int len);
 void	parse_input(char *s, t_data *data);
 void	compare_inputs(char **command);
 char **reparse(char **cmd, t_data *data);
-int	expand_var(char *s, int j, t_data *data);
 
 /**
 ***		Build in commands!!!

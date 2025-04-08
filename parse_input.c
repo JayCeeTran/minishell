@@ -8,7 +8,7 @@ void	parse_input(char *s, t_data *data)
 
 	command = mod_split(s, ' ');
 	if(!command)
-		err_msg_exit("Error\nMalloc failed.\n");
+		err_msg_exit("Error\nMalloc failed.\n", 1);
 	reparse(command, data);
 	compare_inputs(command);
 /*	for(int i = 0; command[i]; i++)

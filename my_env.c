@@ -8,7 +8,7 @@ void my_envp(t_data *data)
 	char **my_env;
 	int i;
 
-	env_size = envp_size(data->env);
+	env_size = envp_size(data->env);	// create own envp list
 	my_env = malloc((env_size + 2) * sizeof(char *));
 	i = 0;
 	while(i < env_size)
@@ -32,7 +32,9 @@ int	envp_size(char **env)
 
 int		env_strlen(char *s)
 {
-	int i = 0;
+	int i;
+
+	i = 0;
 	while(s[i] && ((s[i] >= '0' && s[i] <= '9') || (s[i] >= 'a' && s[i] <= 'z') || (s[i] >= 'A' && s[i] <= 'Z') || s[i] == '_'))
 		i++;
 	if(s[i] == '=')
@@ -63,7 +65,7 @@ void	add_env_var(t_data *data, char *s)
 		if(ft_strncmp(s, data->my_env[i], compare) == 0)
 		{
 			new_env[i] = ft_strdup(s);
-			added = 1;
+			added = 1; //to prevent duplicates
 		}
 		else
 			new_env[i] = ft_strdup(data->my_env[i]);
@@ -106,7 +108,7 @@ void	del_env_var(t_data *data, char *s)
 	while(data->my_env[j])							
 	{
 		if(unset_strcmp(data->my_env[j], s) == 0)
-			j++;
+			j++;	//skip the string to unset copy rest
 		if(data->my_env[j])
 			new_env[i] = ft_strdup(data->my_env[j]);
 		else if(!data->my_env[j])

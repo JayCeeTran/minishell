@@ -9,8 +9,8 @@ void	sigint_handler(int sig)
 int	main(int ac, char **argv, char **env)
 {
 //	char *input = NULL;
-	ac++;
-	argv++;
+	(void)ac;
+	(void)argv;
 //	env++;
 //	t_data data;
 //	data.env = env;

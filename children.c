@@ -50,7 +50,8 @@ int	infile_permission(char *file, int *data_file)
 int	outfile_permission(char *file, int redir, int *data_file)
 {
 	int fd;
-
+	
+	fd = 0;
 	if(redir == 1)
 		fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if(redir == 2)

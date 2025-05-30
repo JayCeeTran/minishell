@@ -30,10 +30,12 @@ all: $(NAME)
 
 run: all
 	./minishell
+fast:
+	$(MAKE) -j8
 
 $(NAME): $(LIBMINI)
 	make -C libft
-	cc $(CFLAGS) $(LIBMINI) $(LIBFT) -lreadline -ltinfo -o $(NAME)
+	cc $(CFLAGS) $(LIBMINI) $(LIBFT) -lreadline -lncurses -o $(NAME)
 
 $(LIBMINI): $(OBJ)
 	ar -rcs $(LIBMINI) $(OBJ)

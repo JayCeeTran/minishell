@@ -16,27 +16,27 @@ void	testing(char **env)
 	t_redir *dir_head = NULL;
 
 	add_redir(&dir_head, new_redir("<", "infile", 0));
-	add_redir(&dir_head, new_redir("<<", "infile2", 1));
+	add_redir(&dir_head, new_redir("<", "infile2", 0));
 	//add_redir(&dir_head, new_redir(">", "out2", 0));
 //	add_redir(&dir_head, new_redir("<<", "test", 0));
 	//add_redir(&dir_head, new_redir(">", "out3", 1));
-	char **cmd1 = new_command("cat", NULL, NULL);
+	char **cmd1 = new_command("export", "myvar=hello", NULL);
 	add_cmd(&cmd_head, newcmd(cmd1, dir_head));
 
-	t_redir *dir_head2 = NULL;
-	add_redir(&dir_head2, new_redir(NULL, NULL, 1));
+//	t_redir *dir_head2 = NULL;
+//	add_redir(&dir_head2, new_redir(NULL, NULL, 1));
 	/*add_redir(&dir_head2, new_redir("<", "infile2", 0));
 	add_redir(&dir_head2, new_redir(">", "outfile2", 0));
 	add_redir(&dir_head2, new_redir(">", "outfile2", 0));
 	add_redir(&dir_head2, new_redir(NULL, NULL, 1));
-*/	char **cmd2 = new_command("cat", "-e", NULL);
+*//*	char **cmd2 = new_command("cat", "-e", NULL);
 	add_cmd(&cmd_head, newcmd(cmd2, dir_head2));
 
 	t_redir *dir_head3 = NULL;
 	add_redir(&dir_head3, new_redir(">", "out2", 0));
 	char **cmd3 = new_command("cat", "-e", NULL);
 	add_cmd(&cmd_head, newcmd(cmd3, dir_head3));
-
+*/
 /*	t_redir *dir_head4 = NULL;
 	add_redir(&dir_head4, new_redir(NULL, NULL, 1));
 	char **cmd4 = new_command("catt", "-e", NULL);
@@ -62,14 +62,14 @@ void	testing(char **env)
 		data.list = data.list->next;
 	}
 */	
-/*	char **menv = data.my_env;
+	char **menv = data.my_env;
 	while(*menv)
 	{
 		printf("%s\n", *menv);
 		menv++;
 	}
 	printf("check!\n");
-*/	free_all_exit("END OF TESTING\n", -1, &data);
+	free_all_exit("END OF TESTING\n", -1, &data);
 	return;
 }
 

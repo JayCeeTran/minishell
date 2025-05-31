@@ -80,6 +80,7 @@ void	b_pwd(t_data *data);
 void	b_env(t_data *data);
 int		b_export(t_data *data, t_cmd *cmd);
 int		b_unset(t_data *data, t_cmd *cmd);
+int		b_exit(t_data *data, t_cmd *cmd);
 /**
 ***		CHILDREN!!!
 **/

@@ -71,7 +71,8 @@ void	read_list(t_data *data)
 		cur = cur->next;	
 		data->first++;
 	}
-	close_pipes_and_files(NULL, data->pipe2, data->pipe1, data->first - 1);
+	close_pipes_and_files(data->file, data->pipe2, data->pipe1, data->first - 1); 
+	//data first to keep track if we have second piped
 	wait_children(data, pid);
 	//expecting new cmd waiting for prompt
 }

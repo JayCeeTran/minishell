@@ -2,8 +2,9 @@
 
 void	built_ins(t_data *data, char **cmd)
 {
-	int fornow = 1;
+	int i;
 
+	i = 1;
 	if(ft_strcmp(cmd[0], "echo") == 0)
 		b_echo(data, cmd);
 	else if (ft_strcmp(cmd[0], "pwd") == 0)
@@ -11,13 +12,23 @@ void	built_ins(t_data *data, char **cmd)
 	else if(ft_strcmp(cmd[0], "env") == 0)
 		b_env(data);
 	else if(ft_strcmp(cmd[0], "export") == 0)
-		(void)fornow;
+	{
+		while(cmd[i])
+			add_env_var(data, cmd[i++]);
+	}
 	else if(ft_strcmp(cmd[0], "unset") == 0)
-		(void)fornow;
-	else
-		return;
-	close_pipes_and_files(data->file, data->pipe2, data->pipe1, data->first);
-	free_all_exit("", 0, data);
+	{
+		while(cmd[i])
+			del_env_var(data, cmd[i++]);
+	}
+	else if(ft_strcmp(cmd[0], "exit") == 0)
+	{
+		close_pipes_and_files(data->file, data->pipe2, data->pipe1, data->first);
+		free_all_exit(NULL, 0, data);
+	}
+	 //if no commands found might not need to exit
+	//close_pipes_and_files(data->file, data->pipe2, data->pipe1, data->first);
+	//free_all_exit("", 0, data);
 }
 
 int		built_ins_parent(t_data *data, t_cmd *cmd)
@@ -33,6 +44,11 @@ int		built_ins_parent(t_data *data, t_cmd *cmd)
 	else if(ft_strcmp(com[0], "unset") == 0)
 	{
 		if(b_unset(data, cmd))
+			return(1);
+	}
+	else if(ft_strcmp(com[0], "exit") == 0)
+	{
+		if(b_exit(data, cmd))
 			return(1);
 	}
 	return(0);

@@ -20,6 +20,7 @@ SRCS = minishell.c \
 	echo.c \
 	built_in.c \
 	my_env.c \
+	exit.c \
 
 OBJ = $(SRCS:.c=.o)
 RM = rm -f
@@ -31,7 +32,7 @@ all: $(NAME)
 run: all
 	./minishell
 fast:
-	$(MAKE) -j8
+	$(MAKE) -j6
 
 $(NAME): $(LIBMINI)
 	make -C libft

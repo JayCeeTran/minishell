@@ -1,10 +1,10 @@
 #include "minishell.h"
 
-void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
-{
-	char *path;
-	int flag_pipe;
-	t_redir *cur;
+	void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
+	{
+		char *path;
+		int flag_pipe;
+		t_redir *cur;
 	
 	flag_pipe = 0;
 	cur = cmd->redirections;

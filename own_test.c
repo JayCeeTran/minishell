@@ -17,10 +17,10 @@ void	testing(char **env)
 
 	add_redir(&dir_head, new_redir("<", "infile", 0));
 	add_redir(&dir_head, new_redir("<", "infile2", 0));
-	//add_redir(&dir_head, new_redir(">", "out2", 0));
+	add_redir(&dir_head, new_redir(">", "out2", 0));
 //	add_redir(&dir_head, new_redir("<<", "test", 0));
 	//add_redir(&dir_head, new_redir(">", "out3", 1));
-	char **cmd1 = new_command("export", "myvar=hello", NULL);
+	char **cmd1 = new_command("exit", "", NULL);
 	add_cmd(&cmd_head, newcmd(cmd1, dir_head));
 
 //	t_redir *dir_head2 = NULL;
@@ -62,13 +62,13 @@ void	testing(char **env)
 		data.list = data.list->next;
 	}
 */	
-	char **menv = data.my_env;
+/*	char **menv = data.my_env;
 	while(*menv)
 	{
 		printf("%s\n", *menv);
 		menv++;
 	}
-	printf("check!\n");
+*/	printf("check!\n");
 	free_all_exit("END OF TESTING\n", -1, &data);
 	return;
 }

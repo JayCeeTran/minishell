@@ -51,5 +51,10 @@ int		built_ins_parent(t_data *data, t_cmd *cmd)
 		if(b_exit(data, cmd))
 			return(1);
 	}
+	else if(ft_strcmp(com[0], "cd") == 0)
+	{
+		if(b_cd(data, cmd))
+			return(1);
+	}
 	return(0);
 }

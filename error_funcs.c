@@ -39,6 +39,14 @@ void	no_such_file(char *file)
 	ft_putstr_fd(": No such file or directory\n", 2);
 }
 
+void	cd_nsf(char *file)
+{
+	write_bash();
+	write(2, "cd: ", 4);
+	ft_putstr_fd(file, 2);
+	ft_putstr_fd(": No such file or directory\n", 2);
+}
+
 void	no_permission(char *file)
 {
 	write_bash();

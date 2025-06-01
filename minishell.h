@@ -81,6 +81,7 @@ void	b_env(t_data *data);
 int		b_export(t_data *data, t_cmd *cmd);
 int		b_unset(t_data *data, t_cmd *cmd);
 int		b_exit(t_data *data, t_cmd *cmd);
+int		b_cd(t_data *data, t_cmd *cmd);
 /**
 ***		CHILDREN!!!
 **/
@@ -135,6 +136,7 @@ void	err_msg_exit(char *s, int excode);
 void	no_closing_quote(void);
 void	write_bash();
 void	no_such_file(char *file);
+void	cd_nsf(char *file);
 void	is_dir_error(char *file);
 void	no_permission(char *file);
 void	command_not_found(t_cmd *cmd, t_data *data);

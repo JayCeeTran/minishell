@@ -9,7 +9,7 @@ int b_exit(t_data *data, t_cmd *cmd)
 	{
 		fill_fds(cur, data);
 		if(data->file[0] == -1 || data->file[1] == -1)
-			return(1);
+			return(0);
 		if(cur->pipe)
 			return(0);
 		cur = cur->next;

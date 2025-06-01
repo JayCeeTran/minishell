@@ -15,12 +15,12 @@ void	testing(char **env)
 	t_cmd *cmd_head = NULL;
 	t_redir *dir_head = NULL;
 
-	add_redir(&dir_head, new_redir("<", "infile", 0));
-	add_redir(&dir_head, new_redir("<", "infile2", 0));
-	add_redir(&dir_head, new_redir(">", "out2", 0));
+//	add_redir(&dir_head, new_redir("<", "infile", 0));
+//	add_redir(&dir_head, new_redir("<", "infile2", 0));
+//	add_redir(&dir_head, new_redir(">", "out2", 0));
 //	add_redir(&dir_head, new_redir("<<", "test", 0));
 	//add_redir(&dir_head, new_redir(">", "out3", 1));
-	char **cmd1 = new_command("exit", "", NULL);
+	char **cmd1 = new_command("pwd", NULL, NULL);
 	add_cmd(&cmd_head, newcmd(cmd1, dir_head));
 
 //	t_redir *dir_head2 = NULL;
@@ -65,7 +65,11 @@ void	testing(char **env)
 /*	char **menv = data.my_env;
 	while(*menv)
 	{
-		printf("%s\n", *menv);
+		if(ft_strncmp("OLDPWD=", *menv, 7) == 0)
+			printf("%s\n", *menv);
+		else if (ft_strncmp("PWD=", *menv, 4) == 0)
+			printf("%s\n", *menv);
+		//printf("%s\n", *menv);
 		menv++;
 	}
 */	printf("check!\n");

@@ -21,6 +21,7 @@ SRCS = minishell.c \
 	built_in.c \
 	my_env.c \
 	exit.c \
+	cd.c \
 
 OBJ = $(SRCS:.c=.o)
 RM = rm -f

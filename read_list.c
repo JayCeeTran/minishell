@@ -46,7 +46,7 @@ void	check_heredoc(t_redir *dir, t_data *data)
 		}
 		if(i == 17)
 			close_free_exit("-bash: maximum here-document count exceeded\n", 1, data);
-		dir = dir->next;		
+		dir = dir->next;	//17 heredoccc + >, <, not tested
 	}
 }
 
@@ -72,7 +72,7 @@ void	read_list(t_data *data)
 		data->first++;
 	}
 	close_pipes_and_files(data->file, data->pipe2, data->pipe1, data->first - 1); 
-	//data first to keep track if we have second piped
+	//data first to keep track if we have second pipe piped
 	wait_children(data, pid);
 	//expecting new cmd waiting for prompt
 }

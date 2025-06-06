@@ -15,28 +15,28 @@ void	testing(char **env)
 	t_cmd *cmd_head = NULL;
 	t_redir *dir_head = NULL;
 
-//	add_redir(&dir_head, new_redir("<", "infile", 0));
-//	add_redir(&dir_head, new_redir("<", "infile2", 0));
-//	add_redir(&dir_head, new_redir(">", "out2", 0));
+	add_redir(&dir_head, new_redir("<<", "infile2", 0));
+	add_redir(&dir_head, new_redir("<<", "infile2", 1));
+	//add_redir(&dir_head, new_redir(">", "out2", 1));
 //	add_redir(&dir_head, new_redir("<<", "test", 0));
 	//add_redir(&dir_head, new_redir(">", "out3", 1));
-	char **cmd1 = new_command("pwd", NULL, NULL);
+	char **cmd1 = new_command("cat", "-e", NULL);
 	add_cmd(&cmd_head, newcmd(cmd1, dir_head));
 
-//	t_redir *dir_head2 = NULL;
-//	add_redir(&dir_head2, new_redir(NULL, NULL, 1));
-	/*add_redir(&dir_head2, new_redir("<", "infile2", 0));
+	t_redir *dir_head2 = NULL;
+//	add_redir(&dir_head2, new_redir("<<", "infile3", 0));
+//	add_redir(&dir_head2, new_redir("<<", "infile4", 1));
+	add_redir(&dir_head2, new_redir(">", "outfile", 0));
 	add_redir(&dir_head2, new_redir(">", "outfile2", 0));
-	add_redir(&dir_head2, new_redir(">", "outfile2", 0));
-	add_redir(&dir_head2, new_redir(NULL, NULL, 1));
-*//*	char **cmd2 = new_command("cat", "-e", NULL);
+	add_redir(&dir_head2, new_redir(NULL, NULL, 0));
+	char **cmd2 = new_command("cat", "-e", NULL);
 	add_cmd(&cmd_head, newcmd(cmd2, dir_head2));
 
-	t_redir *dir_head3 = NULL;
-	add_redir(&dir_head3, new_redir(">", "out2", 0));
-	char **cmd3 = new_command("cat", "-e", NULL);
-	add_cmd(&cmd_head, newcmd(cmd3, dir_head3));
-*/
+//	t_redir *dir_head3 = NULL;
+//	add_redir(&dir_head3, new_redir(">", "out2", 0));
+//	char **cmd3 = new_command("cat", "-e", NULL);
+//	add_cmd(&cmd_head, newcmd(cmd3, dir_head3));
+
 /*	t_redir *dir_head4 = NULL;
 	add_redir(&dir_head4, new_redir(NULL, NULL, 1));
 	char **cmd4 = new_command("catt", "-e", NULL);
@@ -49,31 +49,15 @@ void	testing(char **env)
 */
 	data.list = cmd_head;
 	read_list(&data);
-
-/*	while(data.list)
-	{
-		for(int i = 0; data.list->cmd[i]; i++)
-			printf("%s\n", data.list->cmd[i]);
-		while(data.list->redirections)
-		{
-			printf("dir:%s	file:%s	pipe:%d\n", data.list->redirections->redir, data.list->redirections->file, data.list->redirections->pipe);
-			data.list->redirections = data.list->redirections->next;
-		}
-		data.list = data.list->next;
-	}
-*/	
 /*	char **menv = data.my_env;
 	while(*menv)
 	{
-		if(ft_strncmp("OLDPWD=", *menv, 7) == 0)
-			printf("%s\n", *menv);
-		else if (ft_strncmp("PWD=", *menv, 4) == 0)
-			printf("%s\n", *menv);
-		//printf("%s\n", *menv);
+	
+		printf("%s\n", *menv);
 		menv++;
 	}
 */	printf("check!\n");
-	free_all_exit("END OF TESTING\n", -1, &data);
+	free_all_exit("END OF TESTING\n", 1, &data);
 	return;
 }
 
@@ -145,6 +129,8 @@ char **new_command(char *s, char *s2, char *s3)
 	
 	if(s)
 		cmd[0] = ft_strdup(s);
+	else
+		cmd[0] = NULL;
 	if(s2)
 		cmd[1] = ft_strdup(s2);
 	else

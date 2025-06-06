@@ -6,6 +6,8 @@ t_cmd	*initialize_data(t_data *data, t_pipes *pipes)
 	data->file[1] = 0;
 	data->first = 1;
 	data->status = 0;
+	data->heredoc_path = NULL;
+	data->pipe_pointers = pipes;
 	pipes->cur_p = data->pipe1;
 	pipes->new_p = data->pipe2;
 	return(data->list);
@@ -36,7 +38,7 @@ void	fill_fds(t_redir *redir, t_data *data)
 void	redirections(t_pipes *pipes, t_data *data, int flag)
 {
 	if(data->first != 1)
-		dup2(pipes->cur_p[0], 0);
+		dup2(pipes->cur_p[0], 0); 
 	if(flag && data->first != 1)
 		dup2(pipes->new_p[1], 1);
 	else if(flag && data->first == 1)

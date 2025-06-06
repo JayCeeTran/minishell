@@ -1,77 +1,6 @@
 #include "minishell.h"
 
-void	backup_stdio(t_data *data);
-void	restore_stdio(t_data *data);
-void	remove_and_free_heredoc(t_data *data);
-void	wait_children(t_data *data, pid_t pid);
-
-void	read_list(t_data *data)
-{
-	t_cmd *cur;
-	t_pipes pipes;
-	pid_t pid;
-
-	cur = initialize_data(data, &pipes);
-	if(pipe(data->pipe1) == -1)
-		free_all_exit("Error\nCreating pipe failed\n", 1, data);
-	backup_stdio(data);
-	while(cur)
-	{
-		check_heredoc(cur->redirections, data);
-		if(data->first == 1 && built_ins_parent(data, cur))
-			break;
-		swap_pipes(&pipes, data->first);
-		new_pipes(&pipes, data);
-		pid = fork();
-		fork_helper(pid, data, cur, &pipes);
-		cur = cur->next;	
-		data->first++;
-		remove_and_free_heredoc(data);
-	}
-	restore_stdio(data);
-	close_pipes_and_files(data, data->first - 1);
-	free_list(data) 	//data first to keep track if we have second pipe piped
-	if(data->first > 1)
-		wait_children(data, pid);	//expecting new cmd waiting for prompt
-}
-
-void	backup_stdio(t_data *data)
-{
-	data->o_stdin = dup(0);
-	data->o_stdout = dup(1);	
-}
-
-void	restore_stdio(t_data *data)
-{
-	dup2(data->o_stdin, 0);
-	dup2(data->o_stdout, 1);
-}
-
-void	remove_and_free_heredoc(t_data *data)
-{
-	if(data->heredoc_path)
-	{
-		unlink(data->heredoc_path);
-		free(data->heredoc_path);
-		data->heredoc_path = NULL;
-		write(2, "taal eka\n", 9);
-	}
-}
-
-void	wait_children(t_data *data, pid_t pid)
-{
-	while(--data->first)
-	{
-		if(data->first == 1)
-		{
-			waitpid(pid, &data->status, 0);
-			break;
-		}
-		wait(NULL);
-	}
-}
-
-/*char *find_bin(t_cmd *cmd, t_data *data)
+char *find_bin(t_cmd *cmd, t_data *data)
 {
 	char *path;
 	int fd;
@@ -150,4 +79,4 @@ int check_existence_permission(char *s, t_data *data, t_cmd *cmd)
 		}
 	}
 	return(0);
-}*/
+}

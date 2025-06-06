@@ -1,10 +1,10 @@
 #include "minishell.h"
 
-	void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
-	{
-		char *path;
-		int flag_pipe;
-		t_redir *cur;
+void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
+{
+	char *path;
+	int flag_pipe;
+	t_redir *cur;
 	
 	flag_pipe = 0;
 	cur = cmd->redirections;
@@ -18,9 +18,9 @@
 		cur = cur->next;
 	}
 	redirections(pipes, data, flag_pipe);
-	built_ins(data, cmd->cmd);
-	path = find_bin(cmd, data);
-	close_pipes_and_files(data->file, pipes->new_p, pipes->cur_p, data->first);
+	if(!built_ins(data, cmd))
+		path = find_bin(cmd, data);
+	close_pipes_and_files(data, data->first);
 	execve(path, cmd->cmd, data->my_env);
 	free_all_exit("Execve failed\n", 1, data);
 }

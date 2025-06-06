@@ -1,60 +1,65 @@
 #include "minishell.h"
 
-void	built_ins(t_data *data, char **cmd)
+int	b_echo(t_data *data, t_cmd *cmd)
+{
+	int i;
+	int nl;
+
+	i = 1;
+	nl = 1;
+	(void)data;
+	if(cmd->cmd[1] && ft_strcmp(cmd->cmd[1], "-n") == 0)
+	{
+		nl = 0;
+		i++;
+	}
+	while(cmd->cmd[i])
+	{
+		ft_putstr_fd(cmd->cmd[i], 1);
+		if(cmd->cmd[i + 1])
+			write(1, " ", 1);
+		i++;
+	}
+	if(nl)
+		write(1, "\n", 1);
+	return(1);
+}
+
+int	b_pwd(t_data *data, t_cmd *cmd)
+{
+	char *pwd;
+
+	(void)cmd;
+	pwd = getenv("PWD");
+	if(!pwd)
+	{
+		close_pipes_and_files(data, data->first);
+		free_all_exit("Failed to get pwd\n", 1, data);
+	}
+	ft_putstr_fd(pwd, 1);
+	write(1, "\n", 1);
+	return(1);
+}
+
+int	b_env(t_data *data, t_cmd *cmd)
 {
 	int i;
 
-	i = 1;
-	if(ft_strcmp(cmd[0], "echo") == 0)
-		b_echo(data, cmd);
-	else if (ft_strcmp(cmd[0], "pwd") == 0)
-		b_pwd(data);
-	else if(ft_strcmp(cmd[0], "env") == 0)
-		b_env(data);
-	else if(ft_strcmp(cmd[0], "export") == 0)
+	i = 0;
+	(void)cmd;
+	while(data->env[i])
 	{
-		while(cmd[i])
-			add_env_var(data, cmd[i++]);
+		ft_putstr_fd(data->env[i], 1);
+		write(1, "\n", 1);
+		i++;
 	}
-	else if(ft_strcmp(cmd[0], "unset") == 0)
-	{
-		while(cmd[i])
-			del_env_var(data, cmd[i++]);
-	}
-	else if(ft_strcmp(cmd[0], "exit") == 0)
-	{
-		close_pipes_and_files(data->file, data->pipe2, data->pipe1, data->first);
-		free_all_exit(NULL, 0, data);
-	}
-	 //if no commands found might not need to exit
-	//close_pipes_and_files(data->file, data->pipe2, data->pipe1, data->first);
-	//free_all_exit("", 0, data);
+	return(1);
 }
 
-int		built_ins_parent(t_data *data, t_cmd *cmd)
+int b_exit(t_data *data, t_cmd *cmd)
 {
-	char **com;
-
-	com = cmd->cmd;
-	if(ft_strcmp(com[0], "export") == 0)
-	{	
-		if(b_export(data, cmd))
-			return(1);
-	}
-	else if(ft_strcmp(com[0], "unset") == 0)
-	{
-		if(b_unset(data, cmd))
-			return(1);
-	}
-	else if(ft_strcmp(com[0], "exit") == 0)
-	{
-		if(b_exit(data, cmd))
-			return(1);
-	}
-	else if(ft_strcmp(com[0], "cd") == 0)
-	{
-		if(b_cd(data, cmd))
-			return(1);
-	}
-	return(0);
+	(void)cmd;
+	close_pipes_and_files(data, data->first);
+	free_all_exit(NULL, 0, data);
+	return(1);
 }

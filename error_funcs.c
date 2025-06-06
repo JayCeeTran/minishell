@@ -70,6 +70,6 @@ void	export_error(char *s)
 
 void	close_free_exit(char *msg, int excode, t_data *data)
 {
-	close_pipes_and_files(data->file, data->pipe2, data->pipe1, data->first);
+	close_pipes_and_files(data, data->first);
 	free_all_exit(msg, excode, data);	
 }

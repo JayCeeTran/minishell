@@ -24,6 +24,12 @@ void	free_all_exit(char *s, int excode, t_data *data)
 	free_split(data->path);
 	free_split(data->my_env);
 	free_list(data);
+	if(data->heredoc_path)
+	{
+		free(data->heredoc_path);
+		data->heredoc_path = NULL;
+		write(2, "taal on kayty\n", 13);
+	}
 	if(excode == -1)
 		exit(WEXITSTATUS(data->status)); //MAYBE ANOTHER PLACE!!
 	err_msg_exit(s, excode);

@@ -2,22 +2,23 @@
 
 int	cmd_size(t_cmd *cmd);
 int	change_dir(t_data *data, t_cmd *cmd, char *opwd);
-void change_dir_helper(t_data *data, char *opwd);
+void	 change_dir_helper(t_data *data, char *opwd);
 char	*new_pwd(t_data *data);
 
 int	b_cd(t_data *data, t_cmd *cmd)
 {
 	char *opwd;
-
+		
 	if(cmd_size(cmd) > 2)
 	{
 		write(2, "-bash: cd: too many arguments\n", 30);
+		data->status = 1;
 		return(1);	// exit status 1??
 	}
 	opwd = getcwd(NULL, 0);
 	if(!opwd)
 	{
-		close_pipes_and_files(data->file, data->pipe2, data->pipe1, data->first);
+		close_pipes_and_files(data, data->first);
 		free_all_exit("Error\ngetcwd\n", 1, data);
 	}
 	if(change_dir(data, cmd, opwd))
@@ -37,24 +38,12 @@ int	cmd_size(t_cmd *cmd)
 
 int	change_dir(t_data *data, t_cmd *cmd, char *opwd)
 {
-	t_redir *cur;
-
-	cur = cmd->redirections;
-	while(cur)
-        {
-                fill_fds(cur, data);
-                if(data->file[0] == -1 || data->file[1] == -1)
-                        return(0);
-                if(cur->pipe)
-                        return(0);
-                cur = cur->next;
-        }
 	if(chdir(cmd->cmd[1]) == 0)
 		change_dir_helper(data, opwd);
 	else
 	{
-		cd_nsf(cmd->cmd[1]);
-		//maybe add exit status??
+		cd_nsf(cmd->cmd[1]); //can it return 1 on something else too?
+		data->status = 1;//maybe add exit status??
 	}
 	free(opwd);
 	return(1);
@@ -97,7 +86,7 @@ char	*new_pwd(t_data *data)
 	pwd = getcwd(NULL, 0);
 	if(!pwd)
 	{
-		close_pipes_and_files(data->file, data->pipe2, data->pipe1, data->first);
+		close_pipes_and_files(data, data->first);
 		free_all_exit("Error\ngetcwd\n", 1, data);
 	}
 	dest = ft_strjoin("PWD=", pwd);

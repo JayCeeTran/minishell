@@ -2,9 +2,6 @@ NAME = minishell
 CFLAGS = -Wall -Wextra -Werror
 SRCS = minishell.c \
 	built_ins.c \
-	error_funcs.c \
-	free_functs.c \
-	ft_strcmp.c \
 	modified_split.c \
 	modified_split_helpers.c \
 	parse_input.c \
@@ -12,16 +9,24 @@ SRCS = minishell.c \
 	reparse.c \
 	own_test.c \
 	read_list.c \
-	cut_path_to_bin.c \
+	built_in.c \
+	built_in_logic.c \
+	cd.c \
+	check_heredoc.c \
 	children.c \
 	close_fds.c \
-	initialize_data.c \
+	cut_path_to_bin.c \
+	error_funcs.c \
 	execute_list_helpers.c \
-	echo.c \
-	built_in.c \
+	export.c \
+	find_correct_bin.c \
+	free_functs.c \
+	ft_strcmp.c \
+	initialize_data.c \
+	initialize_struct.c \
 	my_env.c \
-	exit.c \
-	cd.c \
+	save_heredoc.c \
+	unset.c \
 
 OBJ = $(SRCS:.c=.o)
 RM = rm -f

@@ -38,13 +38,22 @@ typedef struct s_data{
 	char **env;
 	char **my_env;
 	char **path;
+	char *heredoc_path;
 	t_cmd *list;
+	t_pipes *pipe_pointers;
 	int pipe1[2];
 	int pipe2[2];
 	int file[2];
 	int first;
+	int o_stdin;
+	int o_stdout;
 	int status;
 } t_data;
+
+typedef struct s_built_ins{
+	char *name;
+	int (*func)(t_data *, t_cmd *);
+} t_built_ins;
 
 /**
 ***		EXECUTION!
@@ -59,13 +68,13 @@ char	**new_command(char *s, char *s2, char *s3);
 void	testing(char **env);
 
 void	read_list(t_data *data);
+void	check_heredoc(t_redir *dir, t_data *data);
+char 	*save_heredoc_path(t_data *data);
 void	my_envp(t_data *data);
-void	add_env_var(t_data *data, char *s);
-void	del_env_var(t_data *data, char *s);
 void	find_path(t_data *data, char **env);
 char	*find_bin(t_cmd *cmd, t_data *data);
 char	*append_to_path(t_cmd *cmd, t_data *data);
-int		check_existence_permission(char *s, t_data *data, t_cmd *cmd);
+int	check_existence_permission(char *s, t_data *data, t_cmd *cmd);
 void	swap_pipes(t_pipes *pipes, int first);
 void	new_pipes(t_pipes *pipes, t_data *data);
 void	fork_helper(pid_t pid, t_data *data, t_cmd *cur, t_pipes *pipes);
@@ -73,21 +82,25 @@ void	fork_helper(pid_t pid, t_data *data, t_cmd *cur, t_pipes *pipes);
 /**
 ***		BUILT INS!!!
 **/
-int		built_ins_parent(t_data *data, t_cmd *cmd);
-void	built_ins(t_data *data, char **cmd);
-void	b_echo(t_data *data, char **cmd);
-void	b_pwd(t_data *data);
-void	b_env(t_data *data);
-int		b_export(t_data *data, t_cmd *cmd);
-int		b_unset(t_data *data, t_cmd *cmd);
-int		b_exit(t_data *data, t_cmd *cmd);
-int		b_cd(t_data *data, t_cmd *cmd);
+int	built_ins_parent(t_data *data, t_cmd *cmd);
+int	built_ins(t_data *data, t_cmd *cmd);
+int	b_echo(t_data *data, t_cmd *cmd);
+int	b_pwd(t_data *data, t_cmd *cmd);
+int	b_env(t_data *data, t_cmd *cmd);
+int	b_export(t_data *data, t_cmd *cmd);
+int	b_unset(t_data *data, t_cmd *cmd);
+int	b_exit(t_data *data, t_cmd *cmd);
+int	b_cd(t_data *data, t_cmd *cmd);
+void	initialize_struct(t_built_ins *built_ins);
+//void	add_env_var(t_data *data, char *s);
+//void	del_env_var(t_data *data, char *s);
+int	envp_size(char **env);
 /**
 ***		CHILDREN!!!
 **/
 void	children(t_data *data, t_cmd *cmd, t_pipes *pipes);	
 void	close_fds(int *fd);
-void	close_pipes_and_files(int *fd, int *npipe, int *cpipe, int first);
+void	close_pipes_and_files(t_data *data, int first);
 t_cmd	*initialize_data(t_data *data, t_pipes *pipes);
 void	fill_fds(t_redir *redir, t_data *data);
 int		infile_permission(char *file, int *data_file);

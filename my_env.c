@@ -12,7 +12,12 @@ void my_envp(t_data *data)
 	while(i < env_size)
 	{
 		my_env[i] = ft_strdup(data->env[i]);
-		i++;
+		if(!my_env[i])
+		{
+			free_split(my_env);
+			err_msg_exit("Error: Malloc failed!\n", 1);
+		}
+		i++;// check again. This happens before read_list. do we need to free all?
 	}
 	my_env[i] = NULL;
 	data->my_env = my_env;

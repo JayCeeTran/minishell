@@ -9,7 +9,7 @@ void	err_msg_exit(char *s, int excode)
 
 void	no_closing_quote(void)
 {
-	ft_putstr_fd("Error\nNo closing quotes\n", 2);
+	ft_putstr_fd("Error: No closing quotes\n", 2);
 	exit(EXIT_FAILURE);
 }
 
@@ -57,7 +57,7 @@ void	no_permission(char *file)
 void	command_not_found(t_cmd *cmd, t_data *data)
 {
 	ft_putstr_fd(cmd->cmd[0], 2);
-	close_free_exit(": command not found\n", 127, data);
+	close_free_exit(": command not found\n", 127, data, 0);
 }
 
 void	export_error(char *s)
@@ -68,8 +68,8 @@ void	export_error(char *s)
 	ft_putstr_fd(": not a valid identifier\n", 2);
 }
 
-void	close_free_exit(char *msg, int excode, t_data *data)
+void	close_free_exit(char *msg, int excode, t_data *data, int parent)
 {
 	close_pipes_and_files(data, data->first);
-	free_all_exit(msg, excode, data);	
+	free_all_exit(msg, excode, data, parent);	
 }

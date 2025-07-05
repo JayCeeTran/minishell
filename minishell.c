@@ -8,17 +8,19 @@ void	sigint_handler(int sig)
 
 int	main(int ac, char **argv, char **env)
 {
-//	char *input = NULL;
+	char *input = NULL;
 	(void)ac;
 	(void)argv;
+//	testing(env);
 //	env++;
-//	t_data data;
-//	data.env = env;
-
-	testing(env);	//	signal(SIGINT, sigint_handler);
-/*	while(1)
+	t_data data;
+	data.env = env;
+	my_envp(&data);
+	find_path(&data, env);
+	//	signal(SIGINT, sigint_handler);
+	while(1)
 	{
-		char *input = readline("minishell$ ");
+		input = readline("minishell$ ");
 		if(!input)
 		{
 			printf("control d\n");
@@ -27,7 +29,9 @@ int	main(int ac, char **argv, char **env)
 		if(input)
 			add_history(input);
 	//	testing(env, input);
+		data.list = parse_cmd_list(tokenize(input));
+		read_list(&data);
 		free(input);
-	}*/
+	}
 	return(0);
 }

@@ -15,16 +15,26 @@
 # include <curses.h>
 # include <term.h>
 
+// HOANGS PART!
+typedef struct s_token
+{
+        char    *token;
+        int             is_operator;
+        struct s_token  *next;
+}       t_token;
+
+// END OF HOANGS PART!
+
 typedef struct s_redir{
 	char *redir;
 	char *file;
-	int pipe;
 	struct s_redir *next;
 } t_redir;
 
 typedef struct s_cmd{
 	char **cmd;
-	struct s_redir *redirections;
+	t_redir *redirections;
+	int pipe;
 	struct s_cmd *next;
 } t_cmd;
 
@@ -34,11 +44,16 @@ typedef struct s_pipes{
 	int *temp_p;
 } t_pipes;
 
+typedef struct s_heredoc{
+	char *path[18];
+	int count;
+} t_heredoc;
+
 typedef struct s_data{
 	char **env;
 	char **my_env;
 	char **path;
-	char *heredoc_path;
+	t_heredoc *heredoc;
 	t_cmd *list;
 	t_pipes *pipe_pointers;
 	int pipe1[2];
@@ -52,24 +67,32 @@ typedef struct s_data{
 
 typedef struct s_built_ins{
 	char *name;
-	int (*func)(t_data *, t_cmd *);
+	int (*func)(t_data *, t_cmd *, int parent);
 } t_built_ins;
+
+// HOANG FUNCS!
+t_token *tokenize(const char *s);
+void    expand_token(t_token *token, char **envp);
+t_cmd   *parse_cmd_list(t_token *tokens);
+//
+
 
 /**
 ***		EXECUTION!
 **/
 
-
-void	add_cmd(t_cmd **head, t_cmd *newnode);
-t_cmd	*newcmd(char **cmd, t_redir *directions);
+//		MY OWN TESTING FOR COMMANDS
+/*void	add_cmd(t_cmd **head, t_cmd *newnode);
+t_cmd	*newcmd(char **cmd, t_redir *directions, int pipe);
 void	add_redir(t_redir **head, t_redir *newnode);
-t_redir *new_redir(char *redir, char *file, int pipe);
+t_redir *new_redir(char *redir, char *file);
 char	**new_command(char *s, char *s2, char *s3);
 void	testing(char **env);
+*/
 
 void	read_list(t_data *data);
 void	check_heredoc(t_redir *dir, t_data *data);
-char 	*save_heredoc_path(t_data *data);
+char 	*save_heredoc_path(t_data *data, char *heredoc);
 void	my_envp(t_data *data);
 void	find_path(t_data *data, char **env);
 char	*find_bin(t_cmd *cmd, t_data *data);
@@ -78,19 +101,19 @@ int	check_existence_permission(char *s, t_data *data, t_cmd *cmd);
 void	swap_pipes(t_pipes *pipes, int first);
 void	new_pipes(t_pipes *pipes, t_data *data);
 void	fork_helper(pid_t pid, t_data *data, t_cmd *cur, t_pipes *pipes);
-
+void	unlink_heredocs(t_heredoc *heredoc);
 /**
 ***		BUILT INS!!!
 **/
 int	built_ins_parent(t_data *data, t_cmd *cmd);
 int	built_ins(t_data *data, t_cmd *cmd);
-int	b_echo(t_data *data, t_cmd *cmd);
-int	b_pwd(t_data *data, t_cmd *cmd);
-int	b_env(t_data *data, t_cmd *cmd);
-int	b_export(t_data *data, t_cmd *cmd);
-int	b_unset(t_data *data, t_cmd *cmd);
-int	b_exit(t_data *data, t_cmd *cmd);
-int	b_cd(t_data *data, t_cmd *cmd);
+int	b_echo(t_data *data, t_cmd *cmd, int parent);
+int	b_pwd(t_data *data, t_cmd *cmd, int parent);
+int	b_env(t_data *data, t_cmd *cmd, int parent);
+int	b_export(t_data *data, t_cmd *cmd, int parent);
+int	b_unset(t_data *data, t_cmd *cmd, int parent);
+int	b_exit(t_data *data, t_cmd *cmd, int parent);
+int	b_cd(t_data *data, t_cmd *cmd, int parent);
 void	initialize_struct(t_built_ins *built_ins);
 //void	add_env_var(t_data *data, char *s);
 //void	del_env_var(t_data *data, char *s);
@@ -101,7 +124,7 @@ int	envp_size(char **env);
 void	children(t_data *data, t_cmd *cmd, t_pipes *pipes);	
 void	close_fds(int *fd);
 void	close_pipes_and_files(t_data *data, int first);
-t_cmd	*initialize_data(t_data *data, t_pipes *pipes);
+t_cmd	*initialize_data(t_data *data, t_pipes *pipes, t_heredoc *heredoc);
 void	fill_fds(t_redir *redir, t_data *data);
 int		infile_permission(char *file, int *data_file);
 int		outfile_permission(char *file, int redir, int *data_file);
@@ -134,13 +157,15 @@ void	echo_cmd(char **cmd);
 /**
 ***		Free Functions!!!
 **/
-
+void	free_heredoc_paths(t_heredoc *heredoc);
 void	free_list(t_data *data);
 void	free_redir(t_redir *directs);
-void	free_all_exit(char *s, int excode, t_data *data);
+void	free_all_exit(char *s, int excode, t_data *data, int parent);
 void	free_split_exit(char **cmd);
 void	free_split(char **split);
+void	free_split_index(char **split, int n);
 char	**free_tokens(char **arr, int j);
+void	malloc_fail(t_data *data, char **new_env, int parent);
 /**
 ***		Error Functions!!!
 **/
@@ -153,6 +178,6 @@ void	cd_nsf(char *file);
 void	is_dir_error(char *file);
 void	no_permission(char *file);
 void	command_not_found(t_cmd *cmd, t_data *data);
-void	close_free_exit(char *msg, int excode, t_data *data);
+void	close_free_exit(char *msg, int excode, t_data *data, int parent);
 void	export_error(char *s);
 #endif

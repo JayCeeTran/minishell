@@ -22,12 +22,15 @@ SRCS = minishell.c \
 	find_correct_bin.c \
 	free_functs.c \
 	ft_strcmp.c \
+	ft_strjoin_3.c \
 	initialize_data.c \
 	initialize_struct.c \
 	my_env.c \
-	save_heredoc.c \
 	unset.c \
-
+	tokenize.c \
+	parsing.c \
+	expand.c \
+	
 OBJ = $(SRCS:.c=.o)
 RM = rm -f
 LIBMINI = libmini.a

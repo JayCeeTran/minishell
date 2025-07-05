@@ -1,12 +1,13 @@
 #include "minishell.h"
 
-t_cmd	*initialize_data(t_data *data, t_pipes *pipes)
+t_cmd	*initialize_data(t_data *data, t_pipes *pipes, t_heredoc *h_doc)
 {
 	data->file[0] = 0;
 	data->file[1] = 0;
 	data->first = 1;
 	data->status = 0;
-	data->heredoc_path = NULL;
+	h_doc->count = 0;
+	data->heredoc = h_doc;
 	data->pipe_pointers = pipes;
 	pipes->cur_p = data->pipe1;
 	pipes->new_p = data->pipe2;
@@ -30,7 +31,7 @@ void	fill_fds(t_redir *redir, t_data *data)
 		{
 			if(data->file[0] > 0)
 				close(data->file[0]);
-			data->file[0] = open("heredoccc", O_RDONLY);
+			data->file[0] = open(data->heredoc->path[data->heredoc->count - 1], O_RDONLY);
 		}
 	}
 }

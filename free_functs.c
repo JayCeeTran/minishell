@@ -5,7 +5,24 @@ void	free_split(char **split)
 	int i;
 
 	i = 0;
+	if(!split)
+		return;
 	while(split[i])
+	{
+		free(split[i]);
+		i++;
+	}
+	free(split);
+}
+
+void	free_split_index(char **split, int n)
+{
+	int i;
+
+	i = 0;
+	if(!split)
+		return;
+	while(i < n)
 	{
 		free(split[i]);
 		i++;
@@ -19,17 +36,27 @@ void	free_split_exit(char **cmd)
 	err_msg_exit("Error\nReparsing failed\n", 1);
 }
 
-void	free_all_exit(char *s, int excode, t_data *data)
+void	free_heredoc_paths(t_heredoc *heredoc)
+{
+	int i;
+
+	i = 0;
+	while(i < heredoc->count)
+	{
+		free(heredoc->path[i]);
+		i++;
+	}
+}
+
+void	free_all_exit(char *s, int excode, t_data *data, int parent)
 {
 	free_split(data->path);
 	free_split(data->my_env);
 	free_list(data);
-	if(data->heredoc_path)
-	{
-		free(data->heredoc_path);
-		data->heredoc_path = NULL;
-		write(2, "taal on kayty\n", 13);
-	}
+	if(data->heredoc)
+		free_heredoc_paths(data->heredoc);
+	if(data->heredoc && parent)
+		unlink_heredocs(data->heredoc);
 	if(excode == -1)
 		exit(WEXITSTATUS(data->status)); //MAYBE ANOTHER PLACE!!
 	err_msg_exit(s, excode);

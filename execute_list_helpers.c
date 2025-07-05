@@ -21,7 +21,7 @@ void	new_pipes(t_pipes *pipes, t_data *data)
 			close_fds(data->file);
 			close(data->o_stdin);
 			close(data->o_stdout);
-			free_all_exit("Error\nCreating pipe failed\n", 1, data);
+			free_all_exit("Error\nCreating pipe failed\n", 1, data, 1);
 		}
 	}
 }
@@ -31,7 +31,7 @@ void	fork_helper(pid_t pid, t_data *data, t_cmd *cur, t_pipes *pipes)
 	if(pid == -1)
 	{
 		close_pipes_and_files(data, data->first);
-		free_all_exit("Error\nFork Failed\n", 1, data);
+		free_all_exit("Error\nFork Failed\n", 1, data, 1);
 	}
 	if(pid == 0)
 		children(data, cur, pipes);

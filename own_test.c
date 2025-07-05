@@ -1,9 +1,9 @@
 #include "minishell.h"
 
 void	add_cmd(t_cmd **head, t_cmd *newnode);
-t_cmd *newcmd(char **cmd, t_redir *directions);
+t_cmd *newcmd(char **cmd, t_redir *directions, int pipe);
 void	add_redir(t_redir **head, t_redir *newnode);
-t_redir *new_redir(char *redir, char *file, int pipe);
+t_redir *new_redir(char *redir, char *file);
 char **new_command(char *s, char *s2, char *s3);
 
 void	testing(char **env)
@@ -15,27 +15,27 @@ void	testing(char **env)
 	t_cmd *cmd_head = NULL;
 	t_redir *dir_head = NULL;
 
-	add_redir(&dir_head, new_redir("<<", "infile2", 0));
-	add_redir(&dir_head, new_redir("<<", "infile2", 1));
+	add_redir(&dir_head, new_redir("<", "infile2"));
+	add_redir(&dir_head, new_redir("<", "infile2"));
 	//add_redir(&dir_head, new_redir(">", "out2", 1));
 //	add_redir(&dir_head, new_redir("<<", "test", 0));
 	//add_redir(&dir_head, new_redir(">", "out3", 1));
 	char **cmd1 = new_command("cat", "-e", NULL);
-	add_cmd(&cmd_head, newcmd(cmd1, dir_head));
+	add_cmd(&cmd_head, newcmd(cmd1, dir_head, 1));
 
 	t_redir *dir_head2 = NULL;
 //	add_redir(&dir_head2, new_redir("<<", "infile3", 0));
 //	add_redir(&dir_head2, new_redir("<<", "infile4", 1));
-	add_redir(&dir_head2, new_redir(">", "outfile", 0));
-	add_redir(&dir_head2, new_redir(">", "outfile2", 0));
-	add_redir(&dir_head2, new_redir(NULL, NULL, 0));
+//	add_redir(&dir_head2, new_redir(">", "outfile"));
+//	add_redir(&dir_head2, new_redir(">", "outfile2"));
+//	add_redir(&dir_head2, new_redir(NULL, NULL));
 	char **cmd2 = new_command("cat", "-e", NULL);
-	add_cmd(&cmd_head, newcmd(cmd2, dir_head2));
+	add_cmd(&cmd_head, newcmd(cmd2, dir_head2, 1));
 
-//	t_redir *dir_head3 = NULL;
-//	add_redir(&dir_head3, new_redir(">", "out2", 0));
-//	char **cmd3 = new_command("cat", "-e", NULL);
-//	add_cmd(&cmd_head, newcmd(cmd3, dir_head3));
+	t_redir *dir_head3 = NULL;
+	add_redir(&dir_head3, new_redir(">", "out2"));
+	char **cmd3 = new_command("cat", "-e", NULL);
+	add_cmd(&cmd_head, newcmd(cmd3, dir_head3, 0));
 
 /*	t_redir *dir_head4 = NULL;
 	add_redir(&dir_head4, new_redir(NULL, NULL, 1));
@@ -57,7 +57,11 @@ void	testing(char **env)
 		menv++;
 	}
 */	printf("check!\n");
-	free_all_exit("END OF TESTING\n", 1, &data);
+	if(1)
+	{
+		write(2, "YES!\n", 5);
+		free_all_exit("END OF TESTING\n", 1, &data, 1);
+	}
 	return;
 }
 
@@ -76,7 +80,7 @@ void	add_cmd(t_cmd **head, t_cmd *newnode)
 	cur->next = newnode;
 }
 
-t_cmd *newcmd(char **cmd, t_redir *directions)
+t_cmd *newcmd(char **cmd, t_redir *directions, int pipe)
 {
 	t_cmd *newnode;
 
@@ -85,6 +89,7 @@ t_cmd *newcmd(char **cmd, t_redir *directions)
 		return(NULL); // EXIT AND ERROR MESSAGE IF FAILS!!!
 	newnode->cmd = cmd;
 	newnode->redirections = directions;
+	newnode->pipe = pipe;
 	newnode->next = NULL;
 	return(newnode);
 }
@@ -104,7 +109,7 @@ void	add_redir(t_redir **head, t_redir *newnode)
 	cur->next = newnode;
 }
 
-t_redir *new_redir(char *redir, char *file, int pipe)
+t_redir *new_redir(char *redir, char *file)
 {
 	t_redir *newnode;
 	newnode = malloc(sizeof(t_redir));
@@ -118,7 +123,6 @@ t_redir *new_redir(char *redir, char *file, int pipe)
 		newnode->file = ft_strdup(file);
 	else
 		newnode->file = NULL;
-	newnode->pipe = pipe;
 	newnode->next = NULL;
 	return(newnode);
 }

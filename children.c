@@ -8,13 +8,13 @@ void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
 	
 	flag_pipe = 0;
 	cur = cmd->redirections;
+	if(cmd->pipe)
+		flag_pipe = 1;
 	while(cur)
 	{
 		fill_fds(cur, data);
 		if(data->file[0] == -1 || data->file[1] == -1)
-			close_free_exit(NULL, 1, data);
-		if(cur->pipe)
-			flag_pipe = 1;
+			close_free_exit(NULL, 1, data, 0);
 		cur = cur->next;
 	}
 	redirections(pipes, data, flag_pipe);
@@ -22,7 +22,7 @@ void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
 		path = find_bin(cmd, data);
 	close_pipes_and_files(data, data->first);
 	execve(path, cmd->cmd, data->my_env);
-	free_all_exit("Execve failed\n", 1, data);
+	free_all_exit("Execve failed\n", 1, data, 0);
 }
 
 

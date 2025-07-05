@@ -11,11 +11,11 @@ void	find_path(t_data *data, char **env)
 		{
 			data->path = ft_split(env[i] + 5, ':');
 			if (!data->path)
-				err_msg_exit("Error\nFailed to malloc envp\n", 1);
+				err_msg_exit("Error: Failed to malloc envp\n", 1);
 			break ;
 		}
 		i++;
 	}
 	if (!env[i])
-		err_msg_exit("Error\nNo PATH= found\n", 1);
+		err_msg_exit("Error: No PATH= found\n", 1);
 }

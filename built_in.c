@@ -31,7 +31,7 @@ int	b_pwd(t_data *data, t_cmd *cmd, int parent)
 	char *pwd;
 
 	(void)cmd;
-	pwd = getenv("PWD");
+	pwd = getcwd(NULL, 0);
 	if(!pwd)
 		close_free_exit("Error: getcwd() failed.\n", 1, data, parent);
 	ft_putstr_fd(pwd, 1);
@@ -46,9 +46,9 @@ int	b_env(t_data *data, t_cmd *cmd, int parent)
 	i = 0;
 	(void)parent;
 	(void)cmd;
-	while(data->env[i])
+	while(data->my_env[i])
 	{
-		ft_putstr_fd(data->env[i], 1);
+		ft_putstr_fd(data->my_env[i], 1);
 		write(1, "\n", 1);
 		i++;
 	}

@@ -42,30 +42,43 @@ void	append_char(char **dst, char c)
 static char	*expand_node(char *input, char **envp)
 {
 	int		i = 0;
-	int		in_single = 0;
-	int		in_double = 0;
 	char	*result = ft_strdup("");
 
 	while (input[i])
 	{
-		if (input[i] == '\'' && !in_double)
-			in_single = !in_single;
-		else if (input[i] == '"' && !in_single)
-			in_double = !in_double;
-		else if (input[i] == '$' && !in_single && input[i + 1])
+		if (input[i] == '$' && input[i + 1])
 		{
-			int		start = ++i;
-			while (input[i] && is_valid_var_char(input[i]))
-				i++;
-			char	*key = ft_substr(input, start, i - start);
-			char	*val = get_env_value(key, envp);
-			result = ft_strjoin_free(result, val);
-			free(key);
-			i--;
+			i++;
+			if (input[i] == '\'' || input[i] == '\"')
+			{
+				char quote = input[i++];
+				int start = i;
+				while (input[i] && input[i] != quote)
+					i++;
+				char *key = ft_substr(input, start, i - start);
+				char *val = get_env_value(key, envp);
+				result = ft_strjoin_free(result, val);
+				free(key);
+				if (input[i] == quote)
+					i++;
+			}
+			else
+			{
+				// $VAR — normal expansion
+				int	start = i;
+				while (input[i] && is_valid_var_char(input[i]))
+					i++;
+				char	*key = ft_substr(input, start, i - start);
+				char	*val = get_env_value(key, envp);
+				result = ft_strjoin_free(result, val);
+				free(key);
+			}
 		}
 		else
+		{
 			append_char(&result, input[i]);
-		i++;
+			i++;
+		}
 	}
 	return (result);
 }

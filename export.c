@@ -63,13 +63,12 @@ void	malloc_fail(t_data *data, char **new_env, int parent)
 	free_split(new_env);
 	close_free_exit("Error: Malloc failed!\n", 1, data, parent);
 }
-
 int	env_strlen(char *s)
 {
 	int i;
 
 	i = 0;
-	while(s[i] && s[i] != '=' && ((s[i] >= '0' && s[i] <= '9') || (s[i] >= 'a' && s[i] <= 'z') || (s[i] >= 'A' && s[i] <= 'Z') || s[i] == '_'))
+	while(s[i] && (ft_isalnum(s[i]) || s[i] == '_'))
 		i++;
 	if(s[i] == '=')
 		return(i);

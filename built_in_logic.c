@@ -20,7 +20,7 @@ int	built_ins(t_data *data, t_cmd *cmd)
 
 int		built_ins_parent(t_data *data, t_cmd *cmd)
 {
-	t_redir *cur;
+	//t_redir *cur;
 	int i;
 	t_built_ins built_ins[20];
 	
@@ -28,11 +28,7 @@ int		built_ins_parent(t_data *data, t_cmd *cmd)
 			return(0);
 	initialize_struct(built_ins);
 	i = 0;
-	cur = cmd->redirections;
-	while(cur)
-	{
-		cur = cur->next;
-	}
+//	cur = cmd->redirections;
 	while(built_ins[i].name)
 	{
 		if(ft_strcmp(cmd->cmd[0], built_ins[i].name) == 0)

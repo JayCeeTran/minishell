@@ -1,12 +1,6 @@
 NAME = minishell
 CFLAGS = -Wall -Wextra -Werror
 SRCS = minishell.c \
-	built_ins.c \
-	modified_split.c \
-	modified_split_helpers.c \
-	parse_input.c \
-	putstr_len.c \
-	reparse.c \
 	own_test.c \
 	read_list.c \
 	built_in.c \
@@ -27,9 +21,12 @@ SRCS = minishell.c \
 	initialize_struct.c \
 	my_env.c \
 	unset.c \
-	tokenize.c \
 	parsing.c \
 	expand.c \
+	tokenize.c \
+	combined_parser.c \
+	merge_token.c \
+	find_e_variable.c \
 	
 OBJ = $(SRCS:.c=.o)
 RM = rm -f

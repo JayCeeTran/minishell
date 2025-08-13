@@ -77,6 +77,18 @@ void	free_list(t_data *data)
 	data->list = NULL;
 }
 
+void	free_token(t_token *token)
+{
+	t_token *temp;
+	while(token)
+	{
+		temp = token;
+		token = token->next;
+		free(temp->token);
+		free(temp);
+	}
+}
+
 void	free_redir(t_redir *directs)
 {
 	t_redir *cur;

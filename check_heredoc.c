@@ -2,6 +2,7 @@
 
 char *save_heredoc_path(t_data *data, char *heredoc);
 void	heredoc_name(t_data *data, char *heredoc);
+char 	*expand_input(char *input, char **envp);
 
 void	check_heredoc(t_redir *dir, t_data *data)
 {
@@ -25,6 +26,8 @@ void	check_heredoc(t_redir *dir, t_data *data)
 				input = readline("> ");
 				if(ft_strcmp(input, limit) == 0)
 					break;
+				if(has_dollar(input))
+					input = expand_input(input, data->my_env);
 				ft_putstr_fd(input, fd);
 				write(fd, "\n", 1);
 				free(input);
@@ -36,6 +39,36 @@ void	check_heredoc(t_redir *dir, t_data *data)
 			close_free_exit("-bash: maximum here-document count exceeded\n", 1, data, 1);
 		dir = dir->next;	//17 heredoccc + >, <, not tested
 	}
+}
+
+char 	*expand_input(char *input, char **envp)
+{
+	int i;
+	char *result;
+
+	i = 0;
+	result = ft_strdup(""); //malloc error exit
+//	if(!result)
+//		close_free_exit("Error: Malloc failed!", 1, data, 1);
+        while (input[i])
+        {
+	        if (input[i] == '$' && input[i + 1])
+                {
+                     	int   start = ++i; //move declaration outside of the loop
+                        while (input[i] && is_valid_var_char(input[i]))
+                                i++;
+                        char    *key = ft_substr(input, start, i - start);
+                        char    *val = get_env_value(key, envp); // same and malloc error exit
+                        result = ft_strjoin_free(result, val); // malloc error exit
+                        free(key);
+                        i--;
+                }
+                else
+                        append_char(&result, input[i]);
+                i++;
+        }
+	free(input);
+        return (result);
 }
 
 void	heredoc_name(t_data *data, char *heredoc)
@@ -60,7 +93,9 @@ void	heredoc_name(t_data *data, char *heredoc)
 char *save_heredoc_path(t_data *data, char *heredoc)
 {
         char *here_path;
-        char *cwd = getcwd(NULL, 0);
+        char *cwd;
+
+	cwd = getcwd(NULL, 0);
         if(!cwd)
                 close_free_exit("Error\nHeredoc path.\n", 1, data, 1);
         here_path = ft_strjoin_3(cwd, "/", heredoc);

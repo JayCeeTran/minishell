@@ -35,6 +35,7 @@ int	b_pwd(t_data *data, t_cmd *cmd, int parent)
 	if(!pwd)
 		close_free_exit("Error: getcwd() failed.\n", 1, data, parent);
 	ft_putstr_fd(pwd, 1);
+	free(pwd);
 	write(1, "\n", 1);
 	return(1);
 }

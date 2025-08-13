@@ -74,7 +74,15 @@ typedef struct s_built_ins{
 t_token *tokenize(const char *s);
 void    expand_token(t_token *token, char **envp);
 t_cmd   *parse_cmd_list(t_token *tokens);
+t_cmd	 *parse(char *line, char **env);
+int     has_dollar(char *s);
+void    append_char(char **dst, char c);
+char    *get_env_value(char *key, char **envp);
+char    *ft_strjoin_free(char *s1, char *s2);
+int     is_valid_var_char(char c);
+void	simplify_tokens(t_token **head);
 //
+
 
 
 /**
@@ -101,6 +109,7 @@ int	check_existence_permission(char *s, t_data *data, t_cmd *cmd);
 void	swap_pipes(t_pipes *pipes, int first);
 void	new_pipes(t_pipes *pipes, t_data *data);
 void	fork_helper(pid_t pid, t_data *data, t_cmd *cur, t_pipes *pipes);
+char 	*find_e_variable(char *var, t_data *data, int len);
 void	unlink_heredocs(t_heredoc *heredoc);
 /**
 ***		BUILT INS!!!
@@ -160,6 +169,7 @@ void	echo_cmd(char **cmd);
 void	free_heredoc_paths(t_heredoc *heredoc);
 void	free_list(t_data *data);
 void	free_redir(t_redir *directs);
+void	free_token(t_token *token);
 void	free_all_exit(char *s, int excode, t_data *data, int parent);
 void	free_split_exit(char **cmd);
 void	free_split(char **split);

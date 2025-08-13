@@ -33,11 +33,12 @@ static int	count_cmd_words(t_token *cur)
 	int	count;
 
 	count = 0;
-	while (cur && !(cur->is_operator && !ft_strncmp(cur->token, "|", 2)))
+	while (cur && (cur->is_operator != 1 || is_redir_op(cur->token)) 
+       && ft_strncmp(cur->token, "|", 2) != 0)
 	{
-		if (!cur->is_operator || !is_redir_op(cur->token))
+		if (cur->is_operator != 1 || !is_redir_op(cur->token))
 			count++;
-		if (cur->is_operator && is_redir_op(cur->token))
+		if (cur->is_operator == 1 && is_redir_op(cur->token))
 			cur = cur->next;
 		cur = cur->next;
 	}
@@ -54,9 +55,9 @@ static char	**fill_cmd_array(t_token **cur)
 	if (!cmd)
 		return (NULL);
 	i = 0;
-	while (*cur && !((*cur)->is_operator && !ft_strncmp((*cur)->token, "|", 2)))
+	while (*cur && !((*cur)->is_operator == 1 && !ft_strncmp((*cur)->token, "|", 2)))
 	{
-		if ((*cur)->is_operator && is_redir_op((*cur)->token))
+		if ((*cur)->is_operator == 1 && is_redir_op((*cur)->token))
 		{
 			if ((*cur)->next)
 				*cur = (*cur)->next;
@@ -92,8 +93,8 @@ t_cmd	*parse_cmd_list(t_token *tokens)
 		t_token *tmp = cur_save;
 		while (tmp && tmp != cur)
 		{
-			if (tmp->is_operator && is_redir_op(tmp->token)
-				&& tmp->next && !tmp->next->is_operator)
+			if (tmp->is_operator == 1 && is_redir_op(tmp->token)
+				&& tmp->next && tmp->next->is_operator != 1)
 			{
 				add_redir(&cur_cmd->redirections, tmp->token, tmp->next->token);
 				tmp = tmp->next;
@@ -101,7 +102,7 @@ t_cmd	*parse_cmd_list(t_token *tokens)
 			tmp = tmp->next;
 		}
 
-		if (cur && cur->is_operator && !ft_strncmp(cur->token, "|", 2))
+		if (cur && cur->is_operator == 1 && !ft_strncmp(cur->token, "|", 2))
 		{
 			cur_cmd->pipe = 1;
 			cur = cur->next;

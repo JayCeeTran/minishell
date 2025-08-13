@@ -11,8 +11,6 @@ int	main(int ac, char **argv, char **env)
 	char *input = NULL;
 	(void)ac;
 	(void)argv;
-//	testing(env);
-//	env++;
 	t_data data;
 	data.env = env;
 	my_envp(&data);
@@ -27,11 +25,12 @@ int	main(int ac, char **argv, char **env)
 			break;
 		}
 		if(input)
-			add_history(input);
-	//	testing(env, input);
-		data.list = parse_cmd_list(tokenize(input));
+			add_history(input); //need to clean up memory?
+		data.list = parse(input, data.my_env);
+	//	free_token(token);
 		read_list(&data);
 		free(input);
 	}
+	free_all_exit(NULL, 0, &data, 1);
 	return(0);
 }

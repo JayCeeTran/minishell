@@ -1,0 +1,103 @@
+//////////			//////////
+//////////	BASIC ECHO 	//////////
+//////////	QUOTES		//////////
+
+echo hello 				| hello
+echo hello    a 			| hello a
+echo "hello a" 				| hello a
+echo "hello a" $USER 			| hello a juhatran
+echo "hello a"$USER 			| hello ajuhatran
+echo "hello a"$USER"hello" 		| hello ajuhatranhello
+echo "'$USER' "$USER"" 			| 'juhatran' juhatran
+echo '$USER' "$USER" $USER 		| $USER juhatran juhatran
+echo ''$USER'             "$USER"' 	| juhatran             "$USER"
+echo "hello a" $USER "hello" 		| hello a juhatran hello
+echo '"hello a" $USER "hello"' 		| "hello a" $USER "hello"
+echo "'"hell   o"   $USER   "hello   a"'" 	| 'hell o   juhatran   hello a'
+echo "hello $USERa$USER" 		| hello juhatran
+echo "hello $USER$USER" 		| hello juhatranjuhatran
+echo "hello $USER $USER" 		| hello juhatran juhatran
+echo "hello $USER.$USER" 		| hello juhatran.juhatran
+echo "$USER" '$USER' 			| juhatran $USER
+echo "'Hello $USER' "$USER hello"" 	| 'Hello juhatran' juhatran hello
+echo '"$USER"'$USER 			| "$USER"juhatran
+
+//////////			//////////
+//////////	BASIC CAT	//////////
+//////////	REDIRECT	//////////	
+
+cat infile | 1111 testfile
+cat infile infile infile 		| 1111 testfile | 1111 testfile | 1111 testfile
+cat <infile 				| 1111 testfile
+cat <infile <infile2 <infile3 		| 3333 testfile
+cat <infile infile2 			| 2222 testfile
+cat infile >out >out2 			| out2 "1111 testfile"
+cat infile >out infile2 		| out "1111 testfile | 2222 testfile"
+cat <infile >out <infile2 		| out "2222 testfile"
+cat -e infile | cat -e | cat -e > out 	| 1111 testfile$$$
+cat -e infile | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e |  cat -e > out 				| 1111 testfile$$$$$$$$$$$$$$$$$$
+cat <infile | cat -e > out 		| 1111 testfile$
+cat infile <infile2 |cat -e >out 	| 1111 testfile$
+cat <infile infile2 |cat -e >out 	| 2222 testfile$
+cat infile >out >out2 			| out2 "1111 testfile"
+cat infile | cat -e >>out >>out2 	| out2 "1111 testfile APPENDED"
+cat infile | cat -e >>out >out2 	| out2 "1111 testfile"
+
+
+///////////			//////////
+///////////	NOFILE TESTS	//////////
+///////////			//////////
+
+cat nofile 		| cat: nofile: No such file or directory
+cat nofile infile 	| cat: nofile: No such file or directory | 1111 testfile
+cat <infile <nofile 	| -bash: nofile: No such file or directory
+cat infile <nofile 	| -bash: nofile: No such file or directory
+cat nofile >out 	| cat: nofile: No such file or directory
+cat <nofile >out	//doesnt make a file | -bash: nofile: No such file or directory
+cat >out <nofile	//makes a file | -bash: nofile: No such file or directory 
+cat infile nofile >out 	| out "1111 testfile" //cat: nofile: No such file or directory
+cat nofile infile >out 	| out "1111 testfile"  //cat: nofile: No such file or directory
+
+//////////			///////////
+//////////	NO PERMISSION	///////////
+//////////	INFILE		///////////
+
+cat infile		| cat: infile: Permission denied
+cat <infile		| bash: infile: Permission denied
+cat infile | cat >out	| create out //cat: infile: Permission denied
+cat <infile | cat >out	| create out //bash: infile: Permission denied
+cat <infile >out	| doesnt make a file //bash: infile: Permission denied
+cat infile >out		| cat: infile: Permission denied
+cat infile infile2 infile3 > out	| 2222 testfile | 3333 testfile | cat: infile: Permission denied
+
+//////////	OUTFILE		///////////
+
+cat infile > out		| bash: out: Permission denied
+cat infile | cat -e > out	| bash: out: Permission denied
+
+//////////	BOTH FILES	///////////
+
+cat infile > out		| bash: out: Permission denied
+cat <infile >out		| bash: out: Permission denied
+cat infile | cat infile 	| mixed output 
+cat infile infile2		| cat: infile: Permission denied | cat: infile2: Permission denied
+
+cat infile | cat >out BUGGED prints on the same line as prompt
+
+
+/////////			///////////
+/////////	OTHER TESTS	///////////
+/////////			///////////
+
+sleep 3 | sleep 5 (sleeps 5 sec)
+yes | head -n 1 | (1 y) head -n 10 (10 y)
+
+
+cat <<infile
+> $USER
+> '$USER'
+> "$USER"
+> infile
+juhatran
+'juhatran'
+"juhatran"

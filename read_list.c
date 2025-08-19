@@ -71,13 +71,14 @@ void	remove_and_free_heredoc(t_data *data)
 
 void	wait_children(t_data *data, pid_t pid)
 {
+	int status;
+	pid_t cur_pid;
+
 	while(--data->first)
 	{
-		if(data->first == 1)
-		{
-			waitpid(pid, &data->status, 0);
-			break;
-		}
-		wait(NULL);
+		cur_pid = wait(&status);
+		if(pid == cur_pid)
+			data->status = WEXITSTATUS(status);	
 	}
+//	printf("pid: %d status: %d data->status: %d exitcode: %d\n", pid, status, data->status, WEXITSTATUS(data->status));
 }

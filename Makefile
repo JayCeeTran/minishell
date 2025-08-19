@@ -13,6 +13,7 @@ SRCS = minishell.c \
 	error_funcs.c \
 	execute_list_helpers.c \
 	export.c \
+	export_list.c \
 	find_correct_bin.c \
 	free_functs.c \
 	ft_strcmp.c \
@@ -20,6 +21,7 @@ SRCS = minishell.c \
 	initialize_data.c \
 	initialize_struct.c \
 	my_env.c \
+	sort_my_env_to_print.c \
 	unset.c \
 	parsing.c \
 	expand.c \

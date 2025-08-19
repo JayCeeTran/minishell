@@ -17,7 +17,7 @@ int	b_echo(t_data *data, t_cmd *cmd, int parent)
 	while(cmd->cmd[i])
 	{
 		ft_putstr_fd(cmd->cmd[i], 1);
-		if(cmd->cmd[i + 1])
+		if(cmd->cmd[i][0] != '\0' &&  cmd->cmd[i + 1])
 			write(1, " ", 1);
 		i++;
 	}

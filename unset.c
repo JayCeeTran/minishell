@@ -2,6 +2,7 @@
 
 int		unset_strcmp(char *s1, char *s2);
 void	del_env_var(t_data *data, char *s, int parent);
+int	validate_argument(char *s);
 
 int b_unset(t_data *data, t_cmd *cmd, int parent)
 {
@@ -10,7 +11,25 @@ int b_unset(t_data *data, t_cmd *cmd, int parent)
 	i = 1;
 	while(cmd->cmd[i])
 	{
-		del_env_var(data, cmd->cmd[i], parent);
+		if(validate_argument(cmd->cmd[i]))
+		{
+			del_env_var(data, cmd->cmd[i], parent);
+			remove_from_export_list(data, cmd->cmd[i], parent);
+		}
+		i++;
+	}
+	return(1);
+}
+
+int	validate_argument(char *s)
+{
+	int i;
+
+	i = 0;
+	while(s[i])
+	{
+		if(!ft_isalnum(s[i]) && s[i] != '_')
+			return(0);
 		i++;
 	}
 	return(1);

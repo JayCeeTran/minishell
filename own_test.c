@@ -2,7 +2,7 @@
 
 void	add_cmd(t_cmd **head, t_cmd *newnode);
 t_cmd *newcmd(char **cmd, t_redir *directions, int pipe);
-void	add_redir(t_redir **head, t_redir *newnode);
+void	add_redirr(t_redir **head, t_redir *newnode);
 t_redir *new_redir(char *redir, char *file);
 char **new_command(char *s, char *s2, char *s3);
 
@@ -15,27 +15,27 @@ void	testing(char **env)
 	t_cmd *cmd_head = NULL;
 	t_redir *dir_head = NULL;
 
-	add_redir(&dir_head, new_redir("<", "infile2"));
-	add_redir(&dir_head, new_redir("<", "infile2"));
+	add_redirr(&dir_head, new_redir("<", "infile2"));
+	//add_redir(&dir_head, new_redir("<", "infile2"));
 	//add_redir(&dir_head, new_redir(">", "out2", 1));
 //	add_redir(&dir_head, new_redir("<<", "test", 0));
 	//add_redir(&dir_head, new_redir(">", "out3", 1));
-	char **cmd1 = new_command("cat", "-e", NULL);
-	add_cmd(&cmd_head, newcmd(cmd1, dir_head, 1));
+	char **cmd1 = new_command("cat", "", NULL);
+	add_cmd(&cmd_head, newcmd(cmd1, dir_head, 0));
 
-	t_redir *dir_head2 = NULL;
+//	t_redir *dir_head2 = NULL;
 //	add_redir(&dir_head2, new_redir("<<", "infile3", 0));
 //	add_redir(&dir_head2, new_redir("<<", "infile4", 1));
 //	add_redir(&dir_head2, new_redir(">", "outfile"));
 //	add_redir(&dir_head2, new_redir(">", "outfile2"));
 //	add_redir(&dir_head2, new_redir(NULL, NULL));
-	char **cmd2 = new_command("cat", "-e", NULL);
-	add_cmd(&cmd_head, newcmd(cmd2, dir_head2, 1));
+//	char **cmd2 = new_command("cat", "-e", NULL);
+//	add_cmd(&cmd_head, newcmd(cmd2, dir_head2, 1));
 
-	t_redir *dir_head3 = NULL;
-	add_redir(&dir_head3, new_redir(">", "out2"));
-	char **cmd3 = new_command("cat", "-e", NULL);
-	add_cmd(&cmd_head, newcmd(cmd3, dir_head3, 0));
+//	t_redir *dir_head3 = NULL;
+//	add_redir(&dir_head3, new_redir(">", "out2"));
+//	char **cmd3 = new_command("cat", "-e", NULL);
+//	add_cmd(&cmd_head, newcmd(cmd3, dir_head3, 0));
 
 /*	t_redir *dir_head4 = NULL;
 	add_redir(&dir_head4, new_redir(NULL, NULL, 1));
@@ -94,7 +94,7 @@ t_cmd *newcmd(char **cmd, t_redir *directions, int pipe)
 	return(newnode);
 }
 
-void	add_redir(t_redir **head, t_redir *newnode)
+void	add_redirr(t_redir **head, t_redir *newnode)
 {
 	t_redir *cur;
 

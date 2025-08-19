@@ -2,6 +2,8 @@
 //////////	BASIC ECHO 	//////////
 //////////	QUOTES		//////////
 
+echo					| just newline
+echo -n					| just new prompt
 echo hello 				| hello
 echo hello    a 			| hello a
 echo "hello a" 				| hello a
@@ -21,7 +23,7 @@ echo "hello $USER.$USER" 		| hello juhatran.juhatran
 echo "$USER" '$USER' 			| juhatran $USER
 echo "'Hello $USER' "$USER hello"" 	| 'Hello juhatran' juhatran hello
 echo '"$USER"'$USER 			| "$USER"juhatran
-
+echo "hello world" > indir		| bash: indir: Is a directory | status 1
 //////////			//////////
 //////////	BASIC CAT	//////////
 //////////	REDIRECT	//////////	
@@ -81,16 +83,126 @@ cat infile > out		| bash: out: Permission denied
 cat <infile >out		| bash: out: Permission denied
 cat infile | cat infile 	| mixed output 
 cat infile infile2		| cat: infile: Permission denied | cat: infile2: Permission denied
+cat infile | cat > out		| bash: out: Permission denied | cat: infile: Permission denied
 
-cat infile | cat >out BUGGED prints on the same line as prompt
+//////////			///////////
+//////////	DIRECTORY TEST	///////////
+//////////			///////////
+
+//////////	DIR INFILE	///////////
+
+cat indir			| cat: indir: Is a directory
+cat <indir			| cat: -: Is a directory
+cat indir | cat > out		| makes out | cat: indir: Is a directory
+cat <indir | cat > out		| makes out | cat: -: Is a directory
+grep 1111 indir			| grep: indir: Is a directory
+cat ./indir			| cat: ./indir: Is a directory
+cat indir/infile		| inside indir
+cat <indir/infile		| inside indir
+cat ./indir/infile		| inside indir
+cat <./indir/infile		| inside indir
+
+//////////	DIR OUTFILE	///////////
+
+cat infile | cat > outdir	| bash: outdir: Is a directory
+cat infile > outdir		| bash: outdir: Is a directory
+cat <infile >outdir		| bash: outdir: Is a directory
+cat infile > ./outdir		| bash: ./outdir: Is a directory
+echo "inside outdir"  >outdir/out 	| inside outdir
+echo "inside outdir"  >./outdir/out	| inside outdir
+
+//////////	DIR COMMAND	///////////
+
+indir infile			| Command 'indir' not found, did you mean:
+cat infile | indir > out	| makes out | indir: command not found
+./indir infile			| bash: ./indir: Is a directory
+./indir infile | ./indir out	| make out | bash: ./indir: Is a directory | bash: ./indir: Is a directory
+
+//////////	EXECUTABLE TEST	///////////
+
+a.out				| a.out: command not found
+./a.out				| Hello world! in a.out
+indir/a.out			| Hello world! in a.out
+../a.out			| Hello world! in a.out
+/indir/a.out			| bash: /indir/a.out: No such file or directory
+./indir/a.out			| Hello world! in a.out
+.a.out				| a.out: command not found
+cat infile | a.out		| cat: infile: Permission denied | a.out: command not found
+cat infile3 | a.out		| a.out: command not found
+cat infile3 | ./a.out		| Hello World! in a.out
+./a.out	| ./a.out		| Hello world! in a.out
+
+//////////	BUILT INS	///////////
+
+//////////	PWD		///////////
+
+pwd				| /home/juhatran/42/merged_mini
+cd indir | pwd			| /home/juhatran/42/merged_mini
+pwd > out			| /home/juhatran/42/merged_mini
+pwd <infile3 | cat		| /home/juhatran/42/merged_mini
+pwd <infile3 | cat > out	| /home/juhatran/42/merged_mini
+echo hello | pwd		| /home/juhatran/42/merged_mini
+
+//////////	CD		///////////
+
+cd				| go to home
+cd indir			| /home/juhatran/42/merged_mini/indir
+cd ..				| /home/juhatran/42/merged_mini
+cd /home/juhatran		| /home/juhatran
+cd hello			| bash: cd: hello: No such file or directory
+cd infile3			| -bash: cd: infile3: Not a directory
+cd indir (no X)			| bash: cd: indir: Permission denied
+cd indir outdir			| bash: cd: too many arguments
+cd infile | cd indir		| both error messages | status 1
+cd outdir | cd indir		| one error msg | status 1
+cd outdir | cd outdir		| no msg | doesnt change dir | status 0
+cd >outdir			| bash: outdir: Is a directory
+cd >out				| creates file and moves to home
+
+//////////	ENV		///////////
+
+env				| List of envs
+env > out			| List in out
+echo hello | env > out		| List in out
+env | env			| 1 list of envs
+
+//////////	EXIT		///////////
+
+exit				| Closes program
+exit | exit			| basically nothing happens just exits children
+
+//////////	EXPORT		///////////
+
+export myvar=hello		| myvar in env
+export				| prints export list
+export myvar			| myvar in export list
+export myvar=			| myvar= emptystring or string with '\0'
+export myvar. myvar2= myvar3=hel| sets all valid arguments | -bash: export: myvar.: not a valid identifier
+export myvar. | export myvar2	| doesnt add to list | status 0
+export myvar | export myvar2.	| doesnt add to list | status 1
+
+/////////	UNSET		///////////
+
+unset				| nothing happens
+unset myvar			| removes myvar from both list
+unset myvar=			| doesnt do anything
+unset myvar=hello		| doesnt remove the var
+unset myvar myvar2= myvar3	| unsets all valid arguments
 
 
+/////////	BUGS		///////////
+$hello 
+'' ""	as command		| probably segfaults because no string
+just newline or enter 		
+free tokens
+just enter
 /////////			///////////
 /////////	OTHER TESTS	///////////
 /////////			///////////
 
+test all builts ins with no arguments
 sleep 3 | sleep 5 (sleeps 5 sec)
-yes | head -n 1 | (1 y) head -n 10 (10 y)
+yes | head -n 1 (1 y) | head -n 10 (10 y)
 
 
 cat <<infile

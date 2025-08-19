@@ -52,6 +52,7 @@ void	free_all_exit(char *s, int excode, t_data *data, int parent)
 {
 	free_split(data->path);
 	free_split(data->my_env);
+	free_split(data->export_list);
 	free_list(data);
 	if(data->heredoc)
 		free_heredoc_paths(data->heredoc);

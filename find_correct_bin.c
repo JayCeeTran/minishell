@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+int	is_there_slash(char *s);
+
 char *find_bin(t_cmd *cmd, t_data *data)
 {
 	char *path;
@@ -7,7 +9,7 @@ char *find_bin(t_cmd *cmd, t_data *data)
 
 	if(!cmd->cmd || !cmd->cmd[0]) //check function return if theres something to be done
 		return(NULL);
-	if((cmd->cmd[0][0] == '/' || cmd->cmd[0][0] == '.') && access(cmd->cmd[0], F_OK) == 0)
+	if(cmd->cmd[0][0] == '/' && access(cmd->cmd[0], F_OK) == 0)
 	{
 		if(access(cmd->cmd[0], X_OK) == 0)
 		{
@@ -28,7 +30,20 @@ char *find_bin(t_cmd *cmd, t_data *data)
 			close_free_exit(NULL, 126, data, 0);
 		}
 	}
-	if(cmd->cmd[0][0] == '/' || cmd->cmd[0][0] == '.')
+	else if(access(cmd->cmd[0], X_OK) == 0 && is_there_slash(cmd->cmd[0]))
+	{
+		fd = open(cmd->cmd[0], O_WRONLY);
+		if(fd > 0)
+			close(fd);
+		else if(fd == -1 && errno == EISDIR)
+		{
+			is_dir_error(cmd->cmd[0]);
+			close_free_exit(NULL, 1, data, 0);
+		}
+		path = ft_strdup(cmd->cmd[0]);
+		return(path);
+	}
+	if(cmd->cmd[0][0] == '/')
 	{
 		no_such_file(cmd->cmd[0]);
 		close_free_exit(NULL, 1, data, 0);
@@ -64,6 +79,20 @@ char *append_to_path(t_cmd *cmd, t_data *data)
 		i++;
 	}
 	return(NULL);
+}
+
+int	is_there_slash(char *s)
+{
+	int i;
+
+	i = 0;
+	while(s[i])
+	{
+		if(s[i] == '/')
+			return(1);
+		i++;
+	}
+	return(0);
 }
 
 int check_existence_permission(char *s, t_data *data, t_cmd *cmd)

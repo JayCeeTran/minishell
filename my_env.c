@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+char **create_export_list(void);
+
 void my_envp(t_data *data)
 {
 	int env_size;
@@ -21,6 +23,16 @@ void my_envp(t_data *data)
 	}
 	my_env[i] = NULL;
 	data->my_env = my_env;
+	data->export_list = create_export_list();
+}
+
+char **create_export_list(void)
+{
+	char **temp;
+
+	temp = malloc(sizeof(char *));
+	temp[0] = NULL;
+	return(temp);
 }
 
 int	envp_size(char **env)

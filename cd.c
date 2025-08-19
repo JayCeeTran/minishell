@@ -5,6 +5,7 @@ int	change_dir(t_data *data, t_cmd *cmd, char *opwd, int parent);
 void	 change_dir_helper(t_data *data, char *opwd, int parent);
 char	*new_pwd(t_data *data, int parent, char *opwd, int index);
 void	make_my_env_freeable(t_data *data, char *opwd, int index, int env_size);
+void	find_home_from_my_env(t_data *data, char **home);
 
 int	b_cd(t_data *data, t_cmd *cmd, int parent)
 {
@@ -14,7 +15,7 @@ int	b_cd(t_data *data, t_cmd *cmd, int parent)
 	{
 		write(2, "-bash: cd: too many arguments\n", 30);
 		data->status = 1;
-		return(1);	// exit status 1??
+		return(0);	// exit status 1??
 	}
 	opwd = getcwd(NULL, 0);
 	if(!opwd)
@@ -36,14 +37,42 @@ int	cmd_size(t_cmd *cmd)
 
 int	change_dir(t_data *data, t_cmd *cmd, char *opwd, int parent)
 {
-	if(chdir(cmd->cmd[1]) == 0)
+	int status_changed;
+	char *home;
+	int error;
+
+	error = 0;
+	home = NULL;
+	status_changed = 0;
+	if(!cmd->cmd[1])
+	{
+		find_home_from_my_env(data, &home);
+		if(chdir(home) == 0)
+			change_dir_helper(data, opwd, parent);
+		else
+			error = 1;
+	}
+	else if(cmd->cmd[1] && chdir(cmd->cmd[1]) == 0)
 		change_dir_helper(data, opwd, parent);
 	else
+		error = 1;
+	if(error)
 	{
-		cd_nsf(cmd->cmd[1]); //can it return 1 on something else too?
-		data->status = 1;//maybe add exit status??
+		write_bash();
+		write(2, "cd: ", 4);
+		if(cmd->cmd[1])
+			ft_putstr_fd(cmd->cmd[1], 2);
+		write(2, ": ", 2);
+		ft_putstr_fd(strerror(errno), 2);
+		write(2, "\n", 1);
+		data->status = 1;
+		status_changed = 1;
 	}
 	free(opwd);
+	if(home)
+		free(home);
+	if(status_changed)
+		return(0);
 	return(1);
 }
 
@@ -113,4 +142,18 @@ void	make_my_env_freeable(t_data *data, char *opwd, int index, int env_size)
 	data->my_env[index] = NULL;
 	free_split_index(data->my_env, env_size);
 	data->my_env = NULL;
+}
+
+void	find_home_from_my_env(t_data *data, char **home)
+{
+	int i;
+
+	i = 0;
+	while(data->my_env[i])
+	{
+		if(ft_strncmp(data->my_env[i], "HOME=", 5) == 0)
+			*home =ft_substr(data->my_env[i], 5, 200);
+		i++;
+	}
+	
 }

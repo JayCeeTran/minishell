@@ -52,6 +52,7 @@ typedef struct s_heredoc{
 typedef struct s_data{
 	char **env;
 	char **my_env;
+	char **export_list;
 	char **path;
 	t_heredoc *heredoc;
 	t_cmd *list;
@@ -90,13 +91,13 @@ void	simplify_tokens(t_token **head);
 **/
 
 //		MY OWN TESTING FOR COMMANDS
-/*void	add_cmd(t_cmd **head, t_cmd *newnode);
+void	add_cmd(t_cmd **head, t_cmd *newnode);
 t_cmd	*newcmd(char **cmd, t_redir *directions, int pipe);
-void	add_redir(t_redir **head, t_redir *newnode);
+void	add_redirr(t_redir **head, t_redir *newnode);
 t_redir *new_redir(char *redir, char *file);
 char	**new_command(char *s, char *s2, char *s3);
 void	testing(char **env);
-*/
+
 
 void	read_list(t_data *data);
 void	check_heredoc(t_redir *dir, t_data *data);
@@ -123,10 +124,17 @@ int	b_export(t_data *data, t_cmd *cmd, int parent);
 int	b_unset(t_data *data, t_cmd *cmd, int parent);
 int	b_exit(t_data *data, t_cmd *cmd, int parent);
 int	b_cd(t_data *data, t_cmd *cmd, int parent);
+
+/**
+***	BUILT IN HELPERS
+**/
+void add_to_export_list(t_data *data, char *s, int parent);
+void remove_from_export_list(t_data *data, char *s, int parent);
 void	initialize_struct(t_built_ins *built_ins);
-//void	add_env_var(t_data *data, char *s);
-//void	del_env_var(t_data *data, char *s);
 int	envp_size(char **env);
+void	sort_my_env(t_data *data, int parent);
+void	print_export_list(char **list);
+int	unset_strcmp(char *s1, char *s2);
 /**
 ***		CHILDREN!!!
 **/
@@ -175,11 +183,11 @@ void	free_split_exit(char **cmd);
 void	free_split(char **split);
 void	free_split_index(char **split, int n);
 char	**free_tokens(char **arr, int j);
-void	malloc_fail(t_data *data, char **new_env, int parent);
 /**
 ***		Error Functions!!!
 **/
 void	is_dir_error(char *file);
+void	malloc_fail(t_data *data, char **new_env, int parent);
 void	err_msg_exit(char *s, int excode);
 void	no_closing_quote(void);
 void	write_bash();

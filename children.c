@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+void	strerror_msg(char *s);
+
 void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
 {
 	char *path;
@@ -7,6 +9,7 @@ void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
 	t_redir *cur;
 	
 	flag_pipe = 0;
+	path = NULL;
 	cur = cmd->redirections;
 	if(cmd->pipe)
 		flag_pipe = 1;
@@ -21,6 +24,8 @@ void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
 	if(!built_ins(data, cmd))
 		path = find_bin(cmd, data);
 	close_pipes_and_files(data, data->first);
+	if(!path)
+		free_all_exit(NULL, 0, data, 0);
 	execve(path, cmd->cmd, data->my_env);
 	free_all_exit("Execve failed\n", 1, data, 0);
 }
@@ -40,7 +45,7 @@ int	infile_permission(char *file, int *data_file)
 		else if(errno == EACCES)
 			no_permission(file);
 		else
-			perror("Error opening infile");
+			strerror_msg(file);
 	}
 	if(data_file[0] > 0)
 		close(data_file[0]);
@@ -65,9 +70,18 @@ int	outfile_permission(char *file, int redir, int *data_file)
 		else if(file[0] == '\0')
 			no_such_file(file);
 		else
-			perror("Error opening outfile\n");
+			strerror_msg(file);
 	}
 	if(data_file[1] > 0)
 		close(data_file[1]);
 	return(fd);
+}
+
+void	strerror_msg(char *s)
+{
+	write_bash();
+	ft_putstr_fd(s, 2);
+	write(2, ": ", 2);
+	ft_putstr_fd(strerror(errno), 2);
+	write(2, "\n", 2);
 }

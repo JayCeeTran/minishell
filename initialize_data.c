@@ -5,7 +5,7 @@ t_cmd	*initialize_data(t_data *data, t_pipes *pipes, t_heredoc *h_doc)
 	data->file[0] = 0;
 	data->file[1] = 0;
 	data->first = 1;
-	data->status = 0;
+	//data->status = 0;
 	h_doc->count = 0;
 	data->heredoc = h_doc;
 	data->pipe_pointers = pipes;

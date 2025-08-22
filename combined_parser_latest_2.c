@@ -81,23 +81,27 @@ t_cmd	*parse(char *line, t_data *data)
 {
 	t_token	*tokens;
 	t_cmd	*cmd_list;
+//	int heredoc_count;
 
+//	heredoc_count = 0;
 	if (is_closed_quotes(line) == 0)
 		return(write(2, "Error1\n", 7), NULL);
 	tokens = tokenize(line);
 	if(!below_max_heredoc(tokens))
 	{
-            free_token(tokens);
-            ft_putstr_fd("bash: maximum here-document count exceeded\n", 2)    ;
-            return(NULL);
-	}		
+		free_token(tokens);
+		ft_putstr_fd("bash: maximum here-document count exceeded\n", 2);
+		return(NULL);
+	}
 	if (!valid_redirs(tokens) || !no_pipe_edges(tokens))
 	{
 		free_token(tokens);
 		return(write(2, "Error2\n", 7), NULL);
 	}
-	expand_token(&tokens, data);
+	expand_token(tokens, data);
 	simplify_tokens(&tokens);
 	cmd_list = parse_cmd_list(tokens);
+	//if(heredoc_count > 16)
+	//	return(NULL); //maybe clean up before returning NULL;
 	return (cmd_list);
 }

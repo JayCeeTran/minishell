@@ -24,8 +24,13 @@ SRCS = minishell.c \
 	sort_my_env_to_print.c \
 	unset.c \
 	parsing.c \
+	parsing_sub.c \
 	expand.c \
+	expand_sub.c \
 	tokenize.c \
+	tokenize_sub.c \
+	tokenize_dollar.c \
+	tokenize_qnd.c \
 	combined_parser.c \
 	merge_token.c \
 	find_e_variable.c \

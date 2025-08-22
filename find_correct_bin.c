@@ -9,44 +9,36 @@ char *find_bin(t_cmd *cmd, t_data *data)
 
 	if(!cmd->cmd || !cmd->cmd[0]) //check function return if theres something to be done
 		return(NULL);
-	if(cmd->cmd[0][0] == '/' && access(cmd->cmd[0], F_OK) == 0)
+	if(cmd->cmd[0][0] == '\0')
+		close_free_exit("'': command not found\n", 127, data, 0);
+	if(is_there_slash(cmd->cmd[0]))
 	{
-		if(access(cmd->cmd[0], X_OK) == 0)
+		if(access(cmd->cmd[0], F_OK) == 0)
 		{
-			fd = open(cmd->cmd[0], O_WRONLY);
-			if(fd > 0)
-				close(fd);
-			else if(fd == -1 && errno == EISDIR)
+			if(access(cmd->cmd[0], X_OK) == 0)
 			{
-				is_dir_error(cmd->cmd[0]);
-				close_free_exit(NULL, 1, data, 0);
+				fd = open(cmd->cmd[0], O_WRONLY);
+				if(fd > 0)
+					close(fd);
+				else if(fd == -1 && errno == EISDIR)
+				{
+					is_dir_error(cmd->cmd[0]);
+					close_free_exit(NULL, 126, data, 0);
+				}
+				path = ft_strdup(cmd->cmd[0]);
+				return(path);
 			}
-			path = ft_strdup(cmd->cmd[0]);
-			return(path);
+			else
+			{
+				no_permission(cmd->cmd[0]);
+				close_free_exit(NULL, 126, data, 0);
+			}
 		}
 		else
 		{
-			no_permission(cmd->cmd[0]);
-			close_free_exit(NULL, 126, data, 0);
+			no_such_file(cmd->cmd[0]);
+			close_free_exit(NULL, 127, data, 0);
 		}
-	}
-	else if(access(cmd->cmd[0], X_OK) == 0 && is_there_slash(cmd->cmd[0]))
-	{
-		fd = open(cmd->cmd[0], O_WRONLY);
-		if(fd > 0)
-			close(fd);
-		else if(fd == -1 && errno == EISDIR)
-		{
-			is_dir_error(cmd->cmd[0]);
-			close_free_exit(NULL, 1, data, 0);
-		}
-		path = ft_strdup(cmd->cmd[0]);
-		return(path);
-	}
-	if(cmd->cmd[0][0] == '/')
-	{
-		no_such_file(cmd->cmd[0]);
-		close_free_exit(NULL, 1, data, 0);
 	}
 	path = append_to_path(cmd, data);
 	if(!path)
@@ -97,8 +89,18 @@ int	is_there_slash(char *s)
 
 int check_existence_permission(char *s, t_data *data, t_cmd *cmd)
 {
+	int fd;
+
 	if(access(s, F_OK) == 0)
 	{
+		fd = open(s, O_WRONLY);
+		if(fd > 1)
+			close(fd);
+		else if(fd == -1 && errno == EISDIR)
+		{	
+			is_dir_error(s);
+			close_free_exit(NULL, 1, data, 0);
+		}
 		if(access(s, X_OK) == 0)
 			return(1);
 		else

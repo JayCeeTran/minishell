@@ -58,45 +58,20 @@ static int no_pipe_edges(t_token *tokens)
 	return (1);
 }
 
-static int below_max_heredoc(t_token *tokens)
-{
-	t_token	*ptr;
-	int		count_heredoc;
-
-	ptr = tokens;
-	count_heredoc = 0;
-	while (ptr->next)
-	{
-		if (ptr->is_operator == 1 && ft_strncmp(ptr->token, "<<", 3) == 0)
-			count_heredoc++ ;
-		ptr = ptr->next;
-	}
-	if (count_heredoc > 16)
-		return (0);
-	else
-		return (1);
-}
-
-t_cmd	*parse(char *line, t_data *data)
+t_cmd	*parse(char *line, char **env)
 {
 	t_token	*tokens;
 	t_cmd	*cmd_list;
 
 	if (is_closed_quotes(line) == 0)
-		return(write(2, "Error1\n", 7), NULL);
+		return(write(2, "Error1\n", 6), NULL);
 	tokens = tokenize(line);
-	if(!below_max_heredoc(tokens))
-	{
-            free_token(tokens);
-            ft_putstr_fd("bash: maximum here-document count exceeded\n", 2)    ;
-            return(NULL);
-	}		
 	if (!valid_redirs(tokens) || !no_pipe_edges(tokens))
 	{
 		free_token(tokens);
-		return(write(2, "Error2\n", 7), NULL);
+		return(write(2, "Error2\n", 6), NULL);
 	}
-	expand_token(&tokens, data);
+	expand_token(tokens, env);
 	simplify_tokens(&tokens);
 	cmd_list = parse_cmd_list(tokens);
 	return (cmd_list);

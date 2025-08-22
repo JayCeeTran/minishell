@@ -64,6 +64,7 @@ typedef struct s_data{
 	int o_stdin;
 	int o_stdout;
 	int status;
+	int lineno;
 } t_data;
 
 typedef struct s_built_ins{
@@ -72,19 +73,36 @@ typedef struct s_built_ins{
 } t_built_ins;
 
 // HOANG FUNCS!
-t_token *tokenize(const char *s);
-void    expand_token(t_token *token, char **envp);
+/*t_token *tokenize(const char *s);
+void    expand_token(t_token *token, t_data *data);
 t_cmd   *parse_cmd_list(t_token *tokens);
-t_cmd	 *parse(char *line, char **env);
-int     has_dollar(char *s);
+t_cmd	 *parse(char *line, t_data *data);
 void    append_char(char **dst, char c);
 char    *get_env_value(char *key, char **envp);
 char    *ft_strjoin_free(char *s1, char *s2);
 int     is_valid_var_char(char c);
 void	simplify_tokens(t_token **head);
-//
-
-
+*/
+int     has_dollar(char *s);
+int		is_valid_var_char(char c);
+int		is_op_char(char c);
+t_token	*new_token_str(const char *s, size_t len, int is_op);
+void	append_token(t_token **head, t_token *node);
+void	tokenize_dollar(const char *s, int *i, t_token **head, int outside_single);
+int		tokenize_quotes_or_dollar(const char *s, int *i, t_token **head);
+t_token	*tokenize(const char *s);
+char	*ft_strjoin_free(char *s1, char *s2);
+void	append_char(char **dst, char c);
+char	*get_env_value(char *key, char **envp);
+char	*expand_node(char *input, t_data *data);
+void	expand_token(t_token **tokens, t_data *data);
+void	simplify_tokens(t_token **head);
+void	fill_redirections(t_cmd *cmd, t_token *start, t_token *end);
+char	**fill_cmd_array(t_token **cur);
+t_cmd	*parse_cmd_list(t_token *tokens);
+void 	free_token(t_token *head);
+void	free_cmd_list(t_cmd *head);
+t_cmd	*parse(char *line, t_data *data);
 
 /**
 ***		EXECUTION!

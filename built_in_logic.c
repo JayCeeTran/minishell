@@ -6,7 +6,11 @@ int	built_ins(t_data *data, t_cmd *cmd)
 {
 	int i;
 	t_built_ins built_ins[20];
-	
+
+	if(!cmd->cmd || !cmd->cmd[0])
+	{	
+		return(1);	
+	}
 	initialize_struct(built_ins);
 	i = 0;
 	while(built_ins[i].name)
@@ -28,9 +32,10 @@ int		built_ins_parent(t_data *data, t_cmd *cmd)
 	//t_redir *cur;
 	int i;
 	t_built_ins built_ins[20];
-	
 	if(cmd->pipe)
 			return(0);
+	if(!cmd->cmd || !cmd->cmd[0])
+		return(1);
 	initialize_struct(built_ins);
 	i = 0;
 //	cur = cmd->redirections;

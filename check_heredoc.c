@@ -3,6 +3,7 @@
 char *save_heredoc_path(t_data *data, char *heredoc);
 void	heredoc_name(t_data *data, char *heredoc);
 char 	*expand_input(char *input, char **envp);
+void	print_error_msg(t_data *data, char *delimiter, int lineno);
 
 void	check_heredoc(t_redir *dir, t_data *data)
 {
@@ -10,11 +11,13 @@ void	check_heredoc(t_redir *dir, t_data *data)
 	char *limit;
 	int	fd;
 	char heredoc[20];
+	int start_lineno;
 
 	while(dir)
 	{
 		if(dir->file && dir->redir && ft_strcmp(dir->redir, "<<") == 0)
-		{
+		{	
+			start_lineno = data->lineno;
 			heredoc_name(data, heredoc);
 			limit = dir->file;
 			fd = open(heredoc, O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -24,12 +27,21 @@ void	check_heredoc(t_redir *dir, t_data *data)
 			while(1)
 			{
 				input = readline("> ");
-				if(ft_strcmp(input, limit) == 0)
+				if(!input)
+				{
+					print_error_msg(data, dir->file, start_lineno);
 					break;
+				}
+				if(ft_strcmp(input, limit) == 0)
+				{
+					data->lineno++;
+					break;
+				}
 				if(has_dollar(input))
 					input = expand_input(input, data->my_env);
 				ft_putstr_fd(input, fd);
 				write(fd, "\n", 1);
+				data->lineno++;
 				free(input);
 			}
 			close(fd);
@@ -101,4 +113,15 @@ char *save_heredoc_path(t_data *data, char *heredoc)
         here_path = ft_strjoin_3(cwd, "/", heredoc);
         free(cwd);
         return(here_path);
+}
+
+void	print_error_msg(t_data *data, char *delimiter, int lineno)
+{
+	(void)data;
+         ft_putstr_fd("bash: warning: here-document at line ", 2);
+         ft_putnbr_fd(lineno, 2);
+         ft_putstr_fd(" delimited by end-of-file (wanted '", 2);
+	 ft_putstr_fd(delimiter, 2);
+	 ft_putstr_fd("')", 2);
+	 write(2, "\n", 1);
 }

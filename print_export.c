@@ -8,7 +8,7 @@ void	count_arguments_and_print_list(t_data *data, t_cmd *cmd, int parent)
 	while(cmd->cmd[i])
 		i++;
 	if(i == 1)
-		sort_my_env(data, parent);
+		sort_my_env(data, parent, 0, 0);
 }
 
 void	print_export_list(char **list)

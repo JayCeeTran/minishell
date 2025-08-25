@@ -12,6 +12,7 @@ SRCS = minishell.c \
 	children.c \
 	close_fds.c \
 	cut_path_to_bin.c \
+	env_strlen.c \
 	error_funcs.c \
 	error_funcs_2.c \
 	error_funcs_3.c \
@@ -19,6 +20,9 @@ SRCS = minishell.c \
 	export.c \
 	export_list.c \
 	find_correct_bin.c \
+	find_bin_helper.c \
+	find_pwds_cd_helper.c \
+	fork_for_heredoc.c \
 	free_functs.c \
 	free_funcs_2.c \
 	ft_strcmp.c \

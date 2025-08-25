@@ -1,6 +1,12 @@
 #include "minishell.h"
 
 void	strerror_msg(char *s);
+void	signals(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
+
 
 void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
 {
@@ -26,6 +32,7 @@ void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
 	close_pipes_and_files(data, data->first);
 	if(!path)
 		free_all_exit(NULL, 0, data, 0);
+	signals();
 	execve(path, cmd->cmd, data->my_env);
 	free_all_exit("Execve failed\n", 1, data, 0);
 }

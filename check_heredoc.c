@@ -5,12 +5,48 @@ void	heredoc_name(t_data *data, char *heredoc);
 char 	*expand_input(char *input, char **envp);
 void	print_error_msg(t_data *data, char *delimiter, int lineno);
 
+void	write_into_heredoc(int fd, char *input, t_data *data)
+{
+	ft_putstr_fd(input, fd);
+	write(fd, "\n", 1);
+	data->lineno++;
+	free(input);
+}
+
+int	input_null(char *input, t_data *data, char *file, int start_lineno)
+{
+	if(!input)
+	{
+		print_error_msg(data, file, start_lineno);
+		return(1);
+	}
+	return(0);
+}
+
+int	compare_input_delimiter(char *input, char *delimiter, t_data *data)
+{
+	if(ft_strcmp(input, delimiter) == 0)
+	{
+		data->lineno++;
+		return(1);
+	}
+	return(0);
+}
+
+char	*open_heredoc(int *start_lineno, char *file, int *fd, t_data *data)
+{
+	*start_lineno = data->lineno;
+	*fd = open("heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if(*fd == -1)
+		close_free_exit("Heredoc opening failed\n", 1, data, 1);
+	return(file);
+}
+
 void	check_heredoc(t_redir *dir, t_data *data)
 {
 	char *input;
 	char *limit;
 	int	fd;
-	char heredoc[20];
 	int start_lineno;
 
 	while(dir)
@@ -18,38 +54,21 @@ void	check_heredoc(t_redir *dir, t_data *data)
 		if(dir->file && dir->redir && ft_strcmp(dir->redir, "<<") == 0)
 		{	
 			start_lineno = data->lineno;
-			heredoc_name(data, heredoc);
-			limit = dir->file;
-			fd = open(heredoc, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if(fd == -1)
-				close_free_exit("Heredoc opening failed\n", 1, data, 1);
-			data->heredoc->path[data->heredoc->count] = save_heredoc_path(data, heredoc);
+			limit = open_heredoc(&start_lineno, dir->file, &fd, data);
 			while(1)
 			{
 				input = readline("> ");
-				if(!input)
-				{
-					print_error_msg(data, dir->file, start_lineno);
+				if(input_null(input, data, dir->file, start_lineno))
 					break;
-				}
-				if(ft_strcmp(input, limit) == 0)
-				{
-					data->lineno++;
+				if(compare_input_delimiter(input, limit, data))
 					break;
-				}
 				if(has_dollar(input))
 					input = expand_input(input, data->my_env);
-				ft_putstr_fd(input, fd);
-				write(fd, "\n", 1);
-				data->lineno++;
-				free(input);
+				write_into_heredoc(fd, input, data);
 			}
 			close(fd);
-			data->heredoc->count++;
 		}
-		if(data->heredoc->count == 17)
-			close_free_exit("-bash: maximum here-document count exceeded\n", 1, data, 1);
-		dir = dir->next;	//17 heredoccc + >, <, not tested
+		dir = dir->next;
 	}
 }
 
@@ -81,38 +100,6 @@ char 	*expand_input(char *input, char **envp)
         }
 	free(input);
         return (result);
-}
-
-void	heredoc_name(t_data *data, char *heredoc)
-{
-	char *temp;
-	char *number;
-
-	number = ft_itoa(data->heredoc->count);	
-	if(!number)
-		close_free_exit("Malloc failed!\n", 1, data, 1);
-	temp = ft_strjoin("heredoc_", number);
-	if(!temp)
-	{
-		free(number);
-		close_free_exit("Malloc failed!\n", 1, data, 1);
-	}
-	ft_strlcpy(heredoc, temp, 20);
-	free(temp);
-	free(number);
-}
-
-char *save_heredoc_path(t_data *data, char *heredoc)
-{
-        char *here_path;
-        char *cwd;
-
-	cwd = getcwd(NULL, 0);
-        if(!cwd)
-                close_free_exit("Error\nHeredoc path.\n", 1, data, 1);
-        here_path = ft_strjoin_3(cwd, "/", heredoc);
-        free(cwd);
-        return(here_path);
 }
 
 void	print_error_msg(t_data *data, char *delimiter, int lineno)

@@ -18,16 +18,16 @@ int	check_my_env_for_duplicate(char *s, t_data *data)
 
 
 
-void add_to_export_list(t_data *data, char *s, int parent, char **new_list)
+void add_to_export_list(t_data *data, char *s, int parent)
 {
 	int i;
-	int added;
+	char **new_list;
 
+	new_list = NULL;
 	if(check_my_env_for_duplicate(s, data))
 		return;
-	added = 0;
 	i = add_export_helper(data, &new_list, s, parent);
-	if(i > 10000)
+	if(i >= 10000)
 	{
 		i -= 10000;
 		new_list[i] = ft_strdup(s);

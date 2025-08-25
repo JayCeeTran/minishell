@@ -3,6 +3,7 @@
 int		unset_strcmp(char *s1, char *s2);
 void	del_env_var(t_data *data, char *s, int parent);
 int	validate_argument(char *s);
+void	my_env_to_new_env(t_data *data, int i, char **new_env);
 
 int b_unset(t_data *data, t_cmd *cmd, int parent)
 {
@@ -53,15 +54,19 @@ void	del_env_var(t_data *data, char *s, int parent)
 		if(unset_strcmp(data->my_env[j], s) == 0)
 		{
 			j++;
-			continue; //skip the string to unset, copy rest
+			continue;
 		}
-	//	if(data->my_env[j])
 		new_env[i] = ft_strdup(data->my_env[j]);
 		if(!new_env[i])
 			malloc_fail(data, new_env, parent);
 		i++;
 		j++;
 	}
+	my_env_to_new_env(data, i, new_env);
+}
+
+void	my_env_to_new_env(t_data *data, int i, char **new_env)
+{
 	new_env[i] = NULL;
 	free_split(data->my_env);
 	data->my_env = new_env;

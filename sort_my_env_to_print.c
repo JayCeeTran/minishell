@@ -5,13 +5,10 @@ void	sort_list(char **list);
 void	swap_pointers(char **s1, char **s2);
 void	free_list_exit(t_data *data, char **temp, int parent);
 
-void	sort_my_env(t_data *data, int parent)
+void	sort_my_env(t_data *data, int parent, int i, int j)
 {
 	char *list[100];
-	int i;
-	int j;
 
-	i = 0;
 	while(data->my_env[i])
 	{
 		list[i] = ft_strdup(data->my_env[i]);
@@ -19,7 +16,6 @@ void	sort_my_env(t_data *data, int parent)
 			free_list_exit(data, list, parent);
 		i++;
 	}
-	j = 0;
 	while(data->export_list[j])
 	{
 		list[i] = ft_strdup(data->export_list[j]);
@@ -34,7 +30,6 @@ void	sort_my_env(t_data *data, int parent)
 	j = 0;
 	while(j < i)
 		free(list[j++]);
-
 }
 
 void	sort_list(char **list)

@@ -87,8 +87,7 @@ t_cmd	*parse(char *line, t_data *data)
 	tokens = tokenize(line);
 	if(!below_max_heredoc(tokens))
 	{
-        	ft_putstr_fd("bash: maximum here-document count exceeded\n", 2)    ;
-		free_all_exit("bash: maximunm here-document count exceeded\n", 1, data, 1);
+       		free_all_exit("bash: maximum here-document count exceeded\n", 1, data, 1);
 		return(NULL);
 	}		
 	if (!valid_redirs(tokens) || !no_pipe_edges(tokens))

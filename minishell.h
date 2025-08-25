@@ -15,6 +15,8 @@
 # include <curses.h>
 # include <term.h>
 
+//extern volatile sig_atomic_t global;
+
 // HOANGS PART!
 typedef struct s_token
 {
@@ -55,7 +57,6 @@ typedef struct s_data{
 	char **my_env;
 	char **export_list;
 	char **path;
-	t_heredoc *heredoc;
 	t_cmd *list;
 	t_pipes *pipe_pointers;
 	int pipe1[2];
@@ -119,21 +120,23 @@ void	testing(char **env);
 
 
 void	read_list(t_data *data);
+int	fork_heredoc(t_data *data, t_cmd *cmd);
 void	check_heredoc(t_redir *dir, t_data *data);
-char 	*save_heredoc_path(t_data *data, char *heredoc);
 void	my_envp(t_data *data);
 void	find_path(t_data *data, char **env);
 char	*find_bin(t_cmd *cmd, t_data *data);
+int	is_there_slash(char *s);
 char	*append_to_path(t_cmd *cmd, t_data *data);
 int	check_existence_permission(char *s, t_data *data, t_cmd *cmd);
 void	swap_pipes(t_pipes *pipes, int first);
 void	new_pipes(t_pipes *pipes, t_data *data);
 void	fork_helper(pid_t pid, t_data *data, t_cmd *cur, t_pipes *pipes);
 char 	*find_e_variable(char *var, t_data *data, int len);
-void	unlink_heredocs(t_heredoc *heredoc);
+
 /**
 ***		BUILT INS!!!
 **/
+
 int	built_ins_parent(t_data *data, t_cmd *cmd);
 int	built_ins(t_data *data, t_cmd *cmd);
 int	b_echo(t_data *data, t_cmd *cmd, int parent);
@@ -147,30 +150,37 @@ int	b_cd(t_data *data, t_cmd *cmd, int parent);
 /**
 ***	BUILT IN HELPERS
 **/
-void add_to_export_list(t_data *data, char *s, int parent, char **new_list);
-int	env_strlen(char *s);
-int add_env_helper(t_data *data, char ***new_env, char *s, int parent);
-void remove_from_export_list(t_data *data, char *s, int parent);
+
 void	initialize_struct(t_built_ins *built_ins);
+int	env_strlen(char *s);
 int	envp_size(char **env);
-void	sort_my_env(t_data *data, int parent);
+void 	add_to_export_list(t_data *data, char *s, int parent);
+int 	add_env_helper(t_data *data, char ***new_env, char *s, int parent);
+void 	remove_from_export_list(t_data *data, char *s, int parent);
+void	sort_my_env(t_data *data, int parent, int i, int j);
 void	print_export_list(char **list);
-int	cd_home(t_data *data, t_cmd *cmd, char *opwd, int parent);
 int	unset_strcmp(char *s1, char *s2);
 void    make_my_env_freeable(t_data *data, char *opwd, int index, int env_size);
-void    find_home_from_my_env(t_data *data, char **home);
-void change_dir_helper(t_data *data, char *opwd, int parent);
 void	count_arguments_and_print_list(t_data *data, t_cmd *cmd, int parent);
 void	print_my_env_with_quotes(char *s);
 int	malloc_new_list_return_old_size(t_data *data, char ***new_env, int parent, char **list);
-int add_export_helper(t_data *data, char ***new_env, char *s, int parent);
+int 	add_export_helper(t_data *data, char ***new_env, char *s, int parent);
+
+void    find_home_from_my_env(t_data *data, char **home);
+void 	change_dir_helper(t_data *data, char *opwd, int parent);
+int	cd_home(t_data *data, t_cmd *cmd, char *opwd, int parent);
+int	find_pwd(t_data *data, int parent, char *opwd, int *i);
+int	find_oldpwd(t_data *data, int parent, char *opwd, int *i);
+char	*new_pwd(t_data *data, int parent, char *opwd, int index);
+
 /**
 ***		CHILDREN!!!
 **/
+
 void	children(t_data *data, t_cmd *cmd, t_pipes *pipes);	
 void	close_fds(int *fd);
 void	close_pipes_and_files(t_data *data, int first);
-t_cmd	*initialize_data(t_data *data, t_pipes *pipes, t_heredoc *heredoc);
+t_cmd	*initialize_data(t_data *data, t_pipes *pipes);
 void	fill_fds(t_redir *redir, t_data *data);
 int		infile_permission(char *file, int *data_file);
 int		outfile_permission(char *file, int redir, int *data_file);
@@ -179,7 +189,7 @@ void	redirections(t_pipes *pipes, t_data *data, int flag);
 
 /**
 ***		PARSING
-**/
+**
 
 int		ft_strcmp(char *s, char *s2);
 char	*ft_strjoin_3(char *s, char *s2, char *s3);
@@ -192,18 +202,11 @@ void	putstr_len(char *s, int fd, int len);
 void	parse_input(char *s, t_data *data);
 void	compare_inputs(char **command);
 char **reparse(char **cmd, t_data *data);
-
-/**
-***		Build in commands!!!
-**/
-
-void	exit_cmd(char **cmd);
-void	echo_cmd(char **cmd);
-
+*/
 /**
 ***		Free Functions!!!
 **/
-void	free_heredoc_paths(t_heredoc *heredoc);
+
 void	free_list(t_data *data);
 void	free_redir(t_redir *directs);
 void	free_token(t_token *token);
@@ -212,10 +215,11 @@ void	free_split_exit(char **cmd);
 void	free_split(char **split);
 void	free_split_index(char **split, int n);
 char	**free_tokens(char **arr, int j);
+
 /**
 ***		Error Functions!!!
 **/
-//void	is_dir_error(char *file);
+
 void	malloc_fail(t_data *data, char **new_env, int parent);
 void	err_msg_exit(char *s, int excode);
 void	no_closing_quote(void);

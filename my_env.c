@@ -8,7 +8,7 @@ void my_envp(t_data *data)
 	char **my_env;
 	int i;
 
-	env_size = envp_size(data->env);	// create own envp list to modify the list.
+	env_size = envp_size(data->env);
 	my_env = malloc((env_size + 2) * sizeof(char *));
 	i = 0;
 	while(i < env_size)

@@ -1,9 +1,14 @@
 #include "minishell.h"
 
-void	sigint_handler(int sig)
+//volatile sig_atomic_t global = 0;
+
+void	control_c(int sig)
 {
 	(void)sig;
-	write(1, "\nminishell> ", 12);
+	write(1, "\n", 1);
+	rl_replace_line("", 0);   // ctear what was typed so far
+    	rl_on_new_line();
+    	rl_redisplay(); 
 }
 
 int	newline_input(char *s);
@@ -18,8 +23,6 @@ int	main(int ac, char **argv, char **env)
 	data.lineno = 1;
 	my_envp(&data);
 	find_path(&data, env);
-//	testing(env);
-//	signal(SIGINT, sigint_handler);
 	main_loop(&data);
 	free_all_exit(NULL, 0, &data, 1);
 	return(0);
@@ -32,12 +35,12 @@ void	main_loop(t_data *data)
 	input = NULL;
 	while(1)
 	{
+
+		signal(SIGINT, control_c);
+		signal(SIGQUIT, SIG_IGN);
 		input = readline("minishell$ ");
 		if(!input)
-		{
-			printf("control d\n");
 			break;
-		}
 		if(newline_input(input))
 			continue;
 		if(input)

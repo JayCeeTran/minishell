@@ -40,7 +40,7 @@ int	add_env_var(t_data *data, char *s, int parent)
 	remove_from_export_list(data, s, parent);
 	new_env = NULL;
 	i = add_env_helper(data, &new_env, s, parent);
-	if(i > 10000)
+	if(i >= 10000)
 	{
 		i -= 10000;
 		new_env[i] = ft_strdup(s);
@@ -74,7 +74,7 @@ int	add_to_export_or_error(t_data *data, int compare, char *s, int parent)
         }
         else if(compare == -2)
         {
-                add_to_export_list(data, s, parent, NULL);
+                add_to_export_list(data, s, parent);
                 return(1);
         }
 	return(2);
@@ -86,19 +86,3 @@ void	swap_to_new_env(t_data *data, int i, char **new_env)
         free_split(data->my_env);
 	data->my_env = new_env;
 }
-
-int	env_strlen(char *s)
-{
-	int i;
-
-	i = 0;
-	while(s[i] && (ft_isalnum(s[i]) || s[i] == '_'))
-		i++;
-	if(s[i] == '=')
-		return(i);
-	if(s[i] == '\0')
-		return(-3);
-	return(-2);
-}
-			// unset from both list
-

@@ -1,38 +1,45 @@
 #include "minishell.h"
 
 void	backup_or_restore_stdio(t_data *data, int flag);
-void	remove_and_free_heredoc(t_data *data);
 void	wait_children(t_data *data, pid_t pid);
+
+pid_t	swap_create_pipes_fork(t_data *data, t_pipes *pipes, t_cmd *cmd)
+{
+	pid_t pid;
+
+	swap_pipes(pipes, data->first);
+	new_pipes(pipes, data);
+	pid = fork();
+	fork_helper(pid, data, cmd, pipes);
+	return(pid);
+}
 
 void	read_list(t_data *data)
 {
 	t_cmd *cur;
 	t_pipes pipes;
 	pid_t pid;
-	t_heredoc heredoc;
 
-	cur = initialize_data(data, &pipes, &heredoc);
+	cur = initialize_data(data, &pipes);
 	if(pipe(data->pipe1) == -1)
 		free_all_exit("Error\nCreating pipe failed\n", 1, data, 1);
 	backup_or_restore_stdio(data, 1);
 	while(cur)
 	{
-		check_heredoc(cur->redirections, data);
+		if(fork_heredoc(data, cur))
+			break;
 		if(data->first == 1 && built_ins_parent(data, cur))
 			break;
-		swap_pipes(&pipes, data->first);
-		new_pipes(&pipes, data);
-		pid = fork();
-		fork_helper(pid, data, cur, &pipes);
+		pid = swap_create_pipes_fork(data, &pipes, cur);
 		cur = cur->next;	
 		data->first++;
 	}
 	backup_or_restore_stdio(data, 0);
 	close_pipes_and_files(data, data->first - 1);
-	free_list(data); 	//data first to keep track if we have second pipe piped
+	free_list(data); 	
 	if(data->first > 1)
-		wait_children(data, pid);	//expecting new cmd waiting for prompt
-	remove_and_free_heredoc(data);
+		wait_children(data, pid);
+	unlink("heredoc");
 }
 
 void	backup_or_restore_stdio(t_data *data, int flag)
@@ -49,36 +56,29 @@ void	backup_or_restore_stdio(t_data *data, int flag)
 	}
 }
 
-void	unlink_heredocs(t_heredoc *heredoc)
-{
-	int i;
-
-	i = 0;
-	while(i < heredoc->count)
-	{
-		unlink(heredoc->path[i]);
-		i++;
-	}
-	heredoc->count = 0;
-}
-
-void	remove_and_free_heredoc(t_data *data)
-{
-	unlink_heredocs(data->heredoc);
-	free_heredoc_paths(data->heredoc);
-	data->heredoc = NULL;
-}
-
 void	wait_children(t_data *data, pid_t pid)
 {
 	int status;
 	pid_t cur_pid;
+	int signal;
 
 	while(--data->first)
 	{
 		cur_pid = wait(&status);
 		if(pid == cur_pid)
-			data->status = WEXITSTATUS(status);	
+		{
+			if(WIFSIGNALED(status))
+			{
+				signal = WTERMSIG(status);
+				data->status = 128 + signal;
+				if(signal == SIGQUIT)
+					ft_putstr_fd("Quit (core dumped)\n", 2);
+				else if(signal == SIGINT)
+					ft_putstr_fd("\n", 2);
+			}
+			else 
+				data->status = WEXITSTATUS(status);
+
+		}
 	}
-//	printf("pid: %d status: %d data->status: %d exitcode: %d\n", pid, status, data->status, WEXITSTATUS(data->status));
 }

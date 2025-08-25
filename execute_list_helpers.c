@@ -28,6 +28,7 @@ void	new_pipes(t_pipes *pipes, t_data *data)
 
 void	fork_helper(pid_t pid, t_data *data, t_cmd *cur, t_pipes *pipes)
 {
+//	signal(SIGINT, SIG_IGN);
 	if(pid == -1)
 	{
 		close_pipes_and_files(data, data->first);

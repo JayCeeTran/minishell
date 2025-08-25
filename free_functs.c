@@ -54,10 +54,10 @@ void	free_all_exit(char *s, int excode, t_data *data, int parent)
 	free_split(data->my_env);
 	free_split(data->export_list);
 	free_list(data);
-	if(data->heredoc)
-		free_heredoc_paths(data->heredoc);
-	if(data->heredoc && parent)
-		unlink_heredocs(data->heredoc);
+//	if(data->heredoc)
+//		free_heredoc_paths(data->heredoc);
+	if(parent)
+		unlink("heredoc");
 	if(excode == -1)
 		exit(WEXITSTATUS(data->status)); //MAYBE ANOTHER PLACE!!
 	err_msg_exit(s, excode);

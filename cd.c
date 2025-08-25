@@ -109,6 +109,7 @@ char	*new_pwd(t_data *data, int parent, char *opwd, int index)
 
 	env_size = envp_size(data->my_env);
 	exit = 0;
+	dest = NULL;
 	pwd = getcwd(NULL, 0);
 	if(!pwd)
 		exit = 1;

@@ -51,11 +51,11 @@ int	add_env_var(t_data *data, char *s, int parent)
 	return(1);
 }
 
-int	malloc_new_list_return_old_size(t_data *data, char ***new_env, int parent)
+int	malloc_new_list_return_old_size(t_data *data, char ***new_env, int parent, char **list)
 {
 	int e_size;
 
-	e_size = envp_size(data->my_env);
+	e_size = envp_size(list);
 	*new_env = malloc((e_size + 2) * sizeof(char *));
 	if(!*new_env)
 		close_free_exit("Error: Malloc failed!\n", 1, data, parent);
@@ -74,7 +74,7 @@ int	add_to_export_or_error(t_data *data, int compare, char *s, int parent)
         }
         else if(compare == -2)
         {
-                add_to_export_list(data, s, parent);
+                add_to_export_list(data, s, parent, NULL);
                 return(1);
         }
 	return(2);

@@ -16,36 +16,20 @@ int	check_my_env_for_duplicate(char *s, t_data *data)
 	return(0);
 }
 
-void add_to_export_list(t_data *data, char *s, int parent)
+
+
+void add_to_export_list(t_data *data, char *s, int parent, char **new_list)
 {
-	char **new_list;
-	int l_size;
 	int i;
 	int added;
 
 	if(check_my_env_for_duplicate(s, data))
 		return;
 	added = 0;
-	i = 0;
-	l_size = envp_size(data->export_list);
-	new_list = malloc((l_size + 2) * sizeof(char *));
-	if(!new_list)
-		close_free_exit("Error: Malloc failed!\n", 1, data, parent);
-	while(i < l_size)
+	i = add_export_helper(data, &new_list, s, parent);
+	if(i > 10000)
 	{
-		if(!added && ft_strcmp(s, data->export_list[i]) == 0)
-		{
-			new_list[i] = ft_strdup(s);
-			added = 1;
-		}
-		else
-			new_list[i] = ft_strdup(data->export_list[i]);
-		if(!new_list[i])
-			malloc_fail(data, new_list, parent);
-		i++;
-	}
-	if(!added)
-	{
+		i -= 10000;
 		new_list[i] = ft_strdup(s);
 		if(!new_list[i++])
 			malloc_fail(data, new_list, parent);

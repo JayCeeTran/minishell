@@ -147,7 +147,7 @@ int	b_cd(t_data *data, t_cmd *cmd, int parent);
 /**
 ***	BUILT IN HELPERS
 **/
-void add_to_export_list(t_data *data, char *s, int parent);
+void add_to_export_list(t_data *data, char *s, int parent, char **new_list);
 int	env_strlen(char *s);
 int add_env_helper(t_data *data, char ***new_env, char *s, int parent);
 void remove_from_export_list(t_data *data, char *s, int parent);
@@ -162,8 +162,8 @@ void    find_home_from_my_env(t_data *data, char **home);
 void change_dir_helper(t_data *data, char *opwd, int parent);
 void	count_arguments_and_print_list(t_data *data, t_cmd *cmd, int parent);
 void	print_my_env_with_quotes(char *s);
-int	malloc_new_list_return_old_size(t_data *data, char ***new_env, int parent);
-
+int	malloc_new_list_return_old_size(t_data *data, char ***new_env, int parent, char **list);
+int add_export_helper(t_data *data, char ***new_env, char *s, int parent);
 /**
 ***		CHILDREN!!!
 **/

@@ -28,7 +28,7 @@ static void	expand_env_var(char **result, char *input, t_data *data, int *i)
 	while (input[*i] && is_valid_var_char(input[*i]))
 		(*i)++;
 	key = ft_substr(input, start, *i - start);
-	val = get_env_value(key, data->env);
+	val = get_env_value(key, data->my_env);
 	*result = ft_strjoin_free(*result, val);
 	free(key);
 	(*i)--;

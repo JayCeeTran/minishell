@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+static void	newlist_to_data(t_data *data, char **new_list, int i);
+
 int	check_my_env_for_duplicate(char *s, t_data *data)
 {
 	int i;
@@ -48,9 +50,7 @@ void add_to_export_list(t_data *data, char *s, int parent)
 		if(!new_list[i++])
 			malloc_fail(data, new_list, parent);
 	}
-	new_list[i] = NULL;
-	free_split(data->export_list);
-	data->export_list = new_list;
+	newlist_to_data(data, new_list, i);
 }
 
 void	remove_from_export_list(t_data *data, char *s, int parent)
@@ -79,6 +79,11 @@ void	remove_from_export_list(t_data *data, char *s, int parent)
 		i++;
 		j++;
 	}
+	newlist_to_data(data, new_list, i);
+}
+
+static void	newlist_to_data(t_data *data, char **new_list, int i)
+{
 	new_list[i] = NULL;
 	free_split(data->export_list);
 	data->export_list = new_list;

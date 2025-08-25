@@ -224,6 +224,8 @@ need to add 139 segfaults
  check if school computers print exit at exit cmd
 free after heredocs errors too many
 cat <<1 <<2 <<#			| syntax error
+ech$a
+env -i
 
 //////////			///////////
 //////////	OTHER TESTS	///////////

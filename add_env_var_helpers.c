@@ -1,0 +1,30 @@
+#include "minishell.h"
+
+int add_env_helper(t_data *data, char ***new_env, char *s, int parent)
+{
+	int e_size;
+	int i;
+	int compare;
+	int added ;
+
+	i = 0;
+	added = 0;
+	compare = env_strlen(s) + 1;
+	e_size = malloc_new_list_return_old_size(data, new_env, parent);
+	while(i < e_size)
+	{
+		if(!added && ft_strncmp(s, data->my_env[i], compare) == 0)
+		{
+			(*new_env)[i] = ft_strdup(s);
+			added = 1;
+		}
+		else
+			(*new_env)[i] = ft_strdup(data->my_env[i]);
+		if(!(*new_env)[i])
+			malloc_fail(data, *new_env, parent);
+		i++;
+	}
+	if(!added)
+		i += 10000;
+	return(i);
+}

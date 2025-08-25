@@ -28,6 +28,7 @@ typedef struct s_token
 typedef struct s_redir{
 	char *redir;
 	char *file;
+	int expand;
 	struct s_redir *next;
 } t_redir;
 
@@ -147,12 +148,22 @@ int	b_cd(t_data *data, t_cmd *cmd, int parent);
 ***	BUILT IN HELPERS
 **/
 void add_to_export_list(t_data *data, char *s, int parent);
+int	env_strlen(char *s);
+int add_env_helper(t_data *data, char ***new_env, char *s, int parent);
 void remove_from_export_list(t_data *data, char *s, int parent);
 void	initialize_struct(t_built_ins *built_ins);
 int	envp_size(char **env);
 void	sort_my_env(t_data *data, int parent);
 void	print_export_list(char **list);
+int	cd_home(t_data *data, t_cmd *cmd, char *opwd, int parent);
 int	unset_strcmp(char *s1, char *s2);
+void    make_my_env_freeable(t_data *data, char *opwd, int index, int env_size);
+void    find_home_from_my_env(t_data *data, char **home);
+void change_dir_helper(t_data *data, char *opwd, int parent);
+void	count_arguments_and_print_list(t_data *data, t_cmd *cmd, int parent);
+void	print_my_env_with_quotes(char *s);
+int	malloc_new_list_return_old_size(t_data *data, char ***new_env, int parent);
+
 /**
 ***		CHILDREN!!!
 **/
@@ -204,7 +215,7 @@ char	**free_tokens(char **arr, int j);
 /**
 ***		Error Functions!!!
 **/
-void	is_dir_error(char *file);
+//void	is_dir_error(char *file);
 void	malloc_fail(t_data *data, char **new_env, int parent);
 void	err_msg_exit(char *s, int excode);
 void	no_closing_quote(void);
@@ -216,4 +227,5 @@ void	no_permission(char *file);
 void	command_not_found(t_cmd *cmd, t_data *data);
 void	close_free_exit(char *msg, int excode, t_data *data, int parent);
 void	export_error(char *s);
+void	cd_error_msg(t_data *data, t_cmd *cmd, int error, int *status_changed);
 #endif

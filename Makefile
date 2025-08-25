@@ -1,28 +1,35 @@
 NAME = minishell
 CFLAGS = -Wall -Wextra -Werror
 SRCS = minishell.c \
+	add_env_var_helpers.c \
 	own_test.c \
 	read_list.c \
 	built_in.c \
 	built_in_logic.c \
 	cd.c \
+	cd_utils.c \
 	check_heredoc.c \
 	children.c \
 	close_fds.c \
 	cut_path_to_bin.c \
 	error_funcs.c \
+	error_funcs_2.c \
+	error_funcs_3.c \
 	execute_list_helpers.c \
 	export.c \
 	export_list.c \
 	find_correct_bin.c \
 	free_functs.c \
+	free_funcs_2.c \
 	ft_strcmp.c \
 	ft_strjoin_3.c \
 	initialize_data.c \
 	initialize_struct.c \
 	my_env.c \
+	print_export.c \
 	sort_my_env_to_print.c \
 	unset.c \
+	valid_char_funcs.c \
 	parsing.c \
 	parsing_sub.c \
 	expand.c \

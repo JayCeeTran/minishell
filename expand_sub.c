@@ -35,7 +35,7 @@ static int	expand_env_var(char **result, char *input, t_data *data, int *i)
 	key = ft_substr(input, start, *i - start);
 	if (!key)
 		return (-1);
-	val = get_env_value(key, data->env);
+	val = get_env_value(key, data->my_env);
 	*result = ft_strjoin_free(*result, val);
 	if (!(*result))
 	{

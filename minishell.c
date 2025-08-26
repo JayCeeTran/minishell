@@ -25,10 +25,11 @@ int	main(int ac, char **argv, char **env)
 	t_data data;
 	data.env = env;
 	data.lineno = 1;
+	data.list = NULL;
 	my_envp(&data);
 	find_path(&data, env);
 	main_loop(&data);
-	ft_putstr_fd("are we here\n", 2);
+//	ft_putstr_fd("are we here\n", 2);
 	free_all_exit(NULL, 0, &data, 1);
 	return(0);
 }

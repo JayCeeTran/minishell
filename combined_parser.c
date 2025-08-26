@@ -6,7 +6,7 @@
 /*   By: hoale <hoale@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 10:43:09 by hoale             #+#    #+#             */
-/*   Updated: 2025/08/26 14:01:20 by jtran            ###   ########.fr       */
+/*   Updated: 2025/08/26 14:17:43 by jtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ t_cmd	*parse(char *line, t_data *data)
 	t_cmd	*cmd_list;
 
 	if (is_closed_quotes(line) == 0)
-		return (write(2, "Error1\n", 7), NULL);
+		return(ft_putstr_fd("bash: syntax error near unexpected token", 2), NULL);
 	tokens = tokenize(line);
 	if (!tokens)
 		return (NULL);
@@ -124,7 +124,7 @@ t_cmd	*parse(char *line, t_data *data)
 	if (!valid_redirs(tokens) || !valid_pipes(tokens))
 	{
 		free_token(tokens);
-		return (write(2, "Error2\n", 7), NULL);
+		return (ft_putstr_fd("bash: syntax error near unexpected token", 2), NULL);
 	}
 	expand_token(&tokens, data);
 	simplify_tokens(&tokens);

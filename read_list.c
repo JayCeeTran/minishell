@@ -36,7 +36,8 @@ void	read_list(t_data *data)
 	}
 	backup_or_restore_stdio(data, 0);
 	close_pipes_and_files(data, data->first - 1);
-	free_cmd_list(data->list); 	
+	free_cmd_list(data->list);
+	data->list = NULL;	
 	if(data->first > 1)
 		wait_children(data, pid);
 	unlink("heredoc");

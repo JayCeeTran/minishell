@@ -1,0 +1,101 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   unset.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 19:33:39 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 19:46:03 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+int		unset_strcmp(char *s1, char *s2);
+void	del_env_var(t_data *data, char *s, int parent);
+int		validate_argument(char *s);
+void	my_env_to_new_env(t_data *data, int i, char **new_env);
+
+int	b_unset(t_data *data, t_cmd *cmd, int parent)
+{
+	int	i;
+
+	i = 1;
+	while (cmd->cmd[i])
+	{
+		if (validate_argument(cmd->cmd[i]))
+		{
+			del_env_var(data, cmd->cmd[i], parent);
+			remove_from_export_list(data, cmd->cmd[i], parent);
+		}
+		i++;
+	}
+	return (1);
+}
+
+int	validate_argument(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (!ft_isalnum(s[i]) && s[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void	del_env_var(t_data *data, char *s, int parent)
+{
+	int		e_size;
+	char	**new_env;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	e_size = envp_size(data->my_env);
+	new_env = malloc((e_size + 1) * sizeof(char *));
+	if (!new_env)
+		close_free_exit("Error: Malloc failed!\n", 1, data, parent);
+	while (data->my_env[j])
+	{
+		if (unset_strcmp(data->my_env[j], s) == 0)
+		{
+			j++;
+			continue ;
+		}
+		new_env[i] = ft_strdup(data->my_env[j]);
+		if (!new_env[i])
+			malloc_fail(data, new_env, parent);
+		i++;
+		j++;
+	}
+	my_env_to_new_env(data, i, new_env);
+}
+
+void	my_env_to_new_env(t_data *data, int i, char **new_env)
+{
+	new_env[i] = NULL;
+	free_split(data->my_env);
+	data->my_env = new_env;
+}
+
+int	unset_strcmp(char *s1, char *s2)
+{
+	while (*s1 && *s2)
+	{
+		if (*s1 != *s2)
+			return (*s1 - *s2);
+		if (*s1 == '=')
+			return (-1);
+		s1++;
+		s2++;
+	}
+	if (*s2 == '\0' && *s1 == '=')
+		return (0);
+	return (*s1 - *s2);
+}

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenize_dollar.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 15:36:45 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 15:36:46 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	tokenize_dollar_pid(t_dollar_ctx *ctx)
@@ -17,8 +29,8 @@ static int	tokenize_dollar_quoted(t_dollar_ctx *ctx, int start)
 		(*ctx->i)++;
 	if (ctx->s[*ctx->i] == q)
 		(*ctx->i)++;
-	if (!append_token(ctx->head,
-			new_tok(&ctx->s[start], *ctx->i - start, ctx->expand)))
+	if (!append_token(ctx->head, new_tok(&ctx->s[start], *ctx->i - start,
+				ctx->expand)))
 		return (-1);
 	return (1);
 }
@@ -34,15 +46,15 @@ static int	tokenize_dollar_var(t_dollar_ctx *ctx, int start)
 {
 	while (ctx->s[*ctx->i] && is_valid_var_char(ctx->s[*ctx->i]))
 		(*ctx->i)++;
-	if (!append_token(ctx->head,
-			new_tok(&ctx->s[start], *ctx->i - start, ctx->expand)))
+	if (!append_token(ctx->head, new_tok(&ctx->s[start], *ctx->i - start,
+				ctx->expand)))
 		return (-1);
 	return (1);
 }
 
 int	tokenize_dollar(t_dollar_ctx *ctx, int out_single)
 {
-	int				start;
+	int	start;
 
 	start = *ctx->i;
 	(*ctx->i)++;

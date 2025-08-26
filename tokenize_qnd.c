@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenize_qnd.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 15:36:55 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 15:36:58 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	handle_dq_dollar(t_dollar_ctx *ctx, int *start)
 {
 	if (*start < *ctx->i)
 	{
-		if (!append_token(ctx->head,
-				new_tok(&ctx->s[*start], *ctx->i - *start, 0)))
+		if (!append_token(ctx->head, new_tok(&ctx->s[*start], *ctx->i - *start,
+					0)))
 			return (-1);
 	}
 	if (tokenize_dollar(ctx, 1) == -1)
@@ -18,8 +30,8 @@ static int	finalize_dq_segment(t_dollar_ctx *ctx, int start)
 {
 	if (start < *ctx->i)
 	{
-		if (!append_token(ctx->head,
-				new_tok(&ctx->s[start], *ctx->i - start, 4)))
+		if (!append_token(ctx->head, new_tok(&ctx->s[start], *ctx->i - start,
+					4)))
 			return (-1);
 	}
 	else if (ctx->s[*ctx->i] == '"')
@@ -51,10 +63,9 @@ int	tokenize_double_quote(t_dollar_ctx *ctx)
 	return (finalize_dq_segment(ctx, start));
 }
 
-/* handle 'single quoted' section: produce one literal token (no expansion) */
 static int	tokenize_single_quote(t_dollar_ctx *ctx)
 {
-	int		start;
+	int	start;
 
 	(*ctx->i)++;
 	start = *ctx->i;
@@ -62,8 +73,8 @@ static int	tokenize_single_quote(t_dollar_ctx *ctx)
 		(*ctx->i)++;
 	if (start < *ctx->i)
 	{
-		if (!append_token(ctx->head, new_tok(&ctx->s[start],
-					*ctx->i - start, 0)))
+		if (!append_token(ctx->head, new_tok(&ctx->s[start], *ctx->i - start,
+					0)))
 			return (-1);
 	}
 	else if (ctx->s[*ctx->i] == '\'')

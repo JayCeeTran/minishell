@@ -22,10 +22,11 @@ SRCS = minishell.c \
 	find_bin_helper.c \
 	find_pwds_cd_helper.c \
 	fork_for_heredoc.c \
-	free_functs.c \
+	free_funcs.c \
 	free_funcs_2.c \
+	free_funcs_3.c \
 	ft_strcmp.c \
-	ft_strjoin_3.c \
+	heredoc_error.c \
 	initialize_data.c \
 	initialize_struct.c \
 	my_env.c \
@@ -44,6 +45,7 @@ SRCS = minishell.c \
 	combined_parser.c \
 	merge_token.c \
 	find_e_variable.c \
+	syntax_error.c \
 	
 OBJ = $(SRCS:.c=.o)
 RM = rm -f
@@ -57,7 +59,7 @@ run: all
 fast:
 	$(MAKE) -j6
 
-$(NAME): $(LIBMINI)
+$(NAME): $(LIBMINI) minishell.h
 	make -C libft
 	cc $(CFLAGS) $(LIBMINI) $(LIBFT) -lreadline -lncurses -o $(NAME)
 

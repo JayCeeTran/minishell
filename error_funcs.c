@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   error_funcs.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 15:33:04 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 15:33:07 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	err_msg_exit(char *s, int excode)
 {
-	if(s)
+	if (s)
 		ft_putstr_fd(s, 2);
 	exit(excode);
 }
@@ -16,7 +28,7 @@ void	no_closing_quote(void)
 void	exe_no_permission(t_data *data)
 {
 	(void)data;
-	ft_putstr_fd("-bash: Permission denied\n", 2); //recheck error message
+	ft_putstr_fd("-bash: Permission denied\n", 2);
 	exit(126);
 }
 

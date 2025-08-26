@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing_sub.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 15:36:19 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 16:16:18 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	is_redir_op(const char *s)
 {
-	if (!ft_strncmp(s, "<", 2) || !ft_strncmp(s, ">", 2)
-		|| !ft_strncmp(s, "<<", 3) || !ft_strncmp(s, ">>", 3))
+	if (!ft_strncmp(s, "<", 2) || !ft_strncmp(s, ">", 2) || !ft_strncmp(s, "<<",
+			3) || !ft_strncmp(s, ">>", 3))
 		return (1);
 	return (0);
 }
@@ -20,7 +32,7 @@ static int	add_redir(t_redir **head, char *redir, char *file, int expand)
 	new->redir = ft_strdup(redir);
 	new->file = ft_strdup(file);
 	if (!new->redir || !new->file)
-		return (free(new->redir), free(new->file), free (new), -1);
+		return (free(new->redir), free(new->file), free(new), -1);
 	new->next = NULL;
 	if (!*head)
 		*head = new;
@@ -58,17 +70,17 @@ int	fill_redirections(t_cmd *cmd, t_token *start, t_token *end)
 	tmp = start;
 	while (tmp && tmp != end)
 	{
-		if (tmp->is_op == 1 && is_redir_op(tmp->token)
-			&& tmp->next && tmp->next->is_op != 1)
+		if (tmp->is_op == 1 && is_redir_op(tmp->token) && tmp->next
+			&& tmp->next->is_op != 1)
 		{
 			if (!ft_strncmp(tmp->token, "<<", 3) && tmp->next->is_op == 4)
 			{
-				if (add_redir(&cmd->redirs,
-						tmp->token, tmp->next->token, 1) == -1)
+				if (add_redir(&cmd->redirs, tmp->token, tmp->next->token, 1)
+					== -1)
 					return (-1);
 			}
-			else if (add_redir(&cmd->redirs,
-					tmp->token, tmp->next->token, 0) == -1)
+			else if (add_redir(&cmd->redirs, tmp->token, tmp->next->token, 0)
+				== -1)
 				return (-1);
 			tmp = tmp->next;
 		}
@@ -97,7 +109,7 @@ char	**fill_cmd_array(t_token **cur)
 			cmd[i] = ft_strdup((*cur)->token);
 			if (!cmd[i])
 				return (NULL);
-			i++ ;
+			i++;
 		}
 		*cur = (*cur)->next;
 	}

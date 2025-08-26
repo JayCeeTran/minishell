@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   merge_token.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 15:34:50 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 15:34:52 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	merge_tokens(t_token *head)
@@ -8,8 +20,8 @@ static int	merge_tokens(t_token *head)
 	cur = head;
 	while (cur && cur->next)
 	{
-		if ((cur->is_op != 1 && cur->is_op != 3)
-			&& (cur->next->is_op != 1 && cur->next->is_op != 3))
+		if ((cur->is_op != 1 && cur->is_op != 3) && (cur->next->is_op != 1
+				&& cur->next->is_op != 3))
 		{
 			if (cur->is_op == 4 || cur->next->is_op == 4)
 				cur->is_op = 4;

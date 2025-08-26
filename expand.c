@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 15:33:32 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 15:33:35 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	append_char(char **dst, char c)
@@ -45,7 +57,7 @@ int	has_dollar(char *s)
 }
 
 static int	expand_and_maybe_remove(t_token **tokens, t_token **cur,
-	t_token **prev, t_data *data)
+		t_token **prev, t_data *data)
 {
 	char	*expanded;
 	t_token	*to_delete;

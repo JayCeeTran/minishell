@@ -1,22 +1,34 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   print_export.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 15:36:30 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 15:36:32 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	count_arguments_and_print_list(t_data *data, t_cmd *cmd, int parent)
 {
-	int i;
+	int	i;
 
 	i = 1;
-	while(cmd->cmd[i])
+	while (cmd->cmd[i])
 		i++;
-	if(i == 1)
+	if (i == 1)
 		sort_my_env(data, parent, 0, 0);
 }
 
 void	print_export_list(char **list)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while(list[i])
+	while (list[i])
 	{
 		ft_putstr_fd("declare -x ", 1);
 		print_my_env_with_quotes(list[i]);
@@ -26,22 +38,22 @@ void	print_export_list(char **list)
 
 void	print_my_env_with_quotes(char *s)
 {
-	int i;
-	int quote;
+	int	i;
+	int	quote;
 
 	quote = 0;
 	i = 0;
-	while(s[i])
+	while (s[i])
 	{
 		write(1, &s[i], 1);
-		if(s[i] == '=')
-		{	
+		if (s[i] == '=')
+		{
 			write(1, "\"", 1);
 			quote = 1;
 		}
 		i++;
 	}
-	if(quote)
+	if (quote)
 		write(1, "\"", 1);
 	write(1, "\n", 1);
 }

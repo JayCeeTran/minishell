@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   valid_char_funcs.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 15:37:36 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 15:37:38 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int     is_valid_var_char(char c)
+int	is_valid_var_char(char c)
 {
-        return (ft_isalnum(c) || c == '_');
+	return (ft_isalnum(c) || c == '_');
 }

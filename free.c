@@ -1,8 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 15:34:32 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 15:34:33 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static void	free_cmd(t_cmd *cmd)
 {
-	int i;
+	int		i;
+	t_redir	*tmp;
 
 	if (!cmd)
 		return ;
@@ -15,7 +28,7 @@ static void	free_cmd(t_cmd *cmd)
 	}
 	while (cmd->redirs)
 	{
-		t_redir *tmp = cmd->redirs;
+		tmp = cmd->redirs;
 		cmd->redirs = cmd->redirs->next;
 		free(tmp->redir);
 		free(tmp->file);
@@ -26,7 +39,7 @@ static void	free_cmd(t_cmd *cmd)
 
 void	free_cmd_list(t_cmd *head)
 {
-	t_cmd *tmp;
+	t_cmd	*tmp;
 
 	while (head)
 	{
@@ -36,9 +49,9 @@ void	free_cmd_list(t_cmd *head)
 	}
 }
 
-void free_token(t_token *head)
+void	free_token(t_token *head)
 {
-	t_token *tmp;
+	t_token	*tmp;
 
 	while (head != NULL)
 	{
@@ -57,7 +70,7 @@ int	is_valid_var_char(char c)
 char	*ft_strjoin_free(char *s1, char *s2)
 {
 	char	*res;
-	
+
 	res = ft_strjoin(s1, s2);
 	free(s1);
 	return (res);

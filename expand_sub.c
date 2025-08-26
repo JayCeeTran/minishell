@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_sub.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 15:33:24 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 15:33:26 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static void	expand_quotes(char c, int *in_single, int *in_double)
@@ -47,8 +59,7 @@ static int	expand_env_var(char **result, char *input, t_data *data, int *i)
 	return (1);
 }
 
-static int	expand_dollar(char **result, char *input, t_data *data,
-		int *i)
+static int	expand_dollar(char **result, char *input, t_data *data, int *i)
 {
 	if (input[*i + 1] == '?')
 		return (expand_status_var(result, data, i));

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   combined_parser.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hoale <hoale@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 10:43:09 by hoale             #+#    #+#             */
-/*   Updated: 2025/08/26 14:17:43 by jtran            ###   ########.fr       */
+/*   Updated: 2025/08/26 17:04:29 by jtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,15 @@ static int	is_closed_quotes(char *cmd)
 	{
 		if ((*ptr == '\'' || *ptr == '\"') && quote == 'a')
 		{
-			is_closed++ ;
+			is_closed++;
 			quote = *ptr;
 		}
 		else if ((*ptr == quote && quote != 'a'))
 		{
-			is_closed++ ;
+			is_closed++;
 			quote = 'a';
 		}
-		ptr++ ;
+		ptr++;
 	}
 	if (is_closed % 2 == 0)
 		return (1);
@@ -87,7 +87,7 @@ static int	valid_pipes(t_token *tokens)
 	return (1);
 }
 
-static int	below_max_heredoc(t_token *tokens)
+int	below_max_heredoc(t_token *tokens)
 {
 	t_token	*ptr;
 	int		count_heredoc;
@@ -97,7 +97,7 @@ static int	below_max_heredoc(t_token *tokens)
 	while (ptr->next)
 	{
 		if (ptr->is_op == 1 && ft_strncmp(ptr->token, "<<", 3) == 0)
-			count_heredoc++ ;
+			count_heredoc++;
 		ptr = ptr->next;
 	}
 	if (count_heredoc > 16)
@@ -111,20 +111,18 @@ t_cmd	*parse(char *line, t_data *data)
 	t_token	*tokens;
 	t_cmd	*cmd_list;
 
-	if (is_closed_quotes(line) == 0)
-		return(ft_putstr_fd("bash: syntax error near unexpected token", 2), NULL);
+	if (is_closed_quotes(line) == 0 || !no_slash_n_semicol(line))
+		return (ft_putstr_fd("bash: syntax error near unexpected token\n", 2),
+			NULL);
 	tokens = tokenize(line);
 	if (!tokens)
 		return (NULL);
-	if(!below_max_heredoc(tokens))
-        {
-                free_all_exit("bash: maximum here-document count exceeded\n", 1, data, 1);
-                return(NULL);
-        }
+	check_max_heredoc(data, tokens);
 	if (!valid_redirs(tokens) || !valid_pipes(tokens))
 	{
 		free_token(tokens);
-		return (ft_putstr_fd("bash: syntax error near unexpected token", 2), NULL);
+		return (ft_putstr_fd("bash: syntax error near unexpected token\n", 2),
+			NULL);
 	}
 	expand_token(&tokens, data);
 	simplify_tokens(&tokens);

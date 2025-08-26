@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenize.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 15:37:08 by jtran             #+#    #+#             */
+/*   Updated: 2025/08/26 15:37:09 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	tokenize_space(t_dollar_ctx *ctx)
@@ -47,8 +59,8 @@ static int	tokenize_unquoted_word(t_dollar_ctx *ctx)
 		(*ctx->i)++;
 	if (start < *ctx->i)
 	{
-		if (!append_token(ctx->head, new_tok(&ctx->s[start],
-					*ctx->i - start, 0)))
+		if (!append_token(ctx->head, new_tok(&ctx->s[start], *ctx->i - start,
+					0)))
 			return (-1);
 		else
 			return (1);

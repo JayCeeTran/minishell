@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize_sub.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hoale <hoale@student.hive.fi>              +#+  +:+       +#+        */
+/*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 10:44:26 by hoale             #+#    #+#             */
-/*   Updated: 2025/08/26 13:56:17 by jtran            ###   ########.fr       */
+/*   Updated: 2025/08/26 15:37:04 by jtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ int	append_token(t_token **head, t_token *node)
 int	tokenize_dollar_status(t_dollar_ctx *ctx, int start)
 {
 	(*ctx->i)++;
-	if (!append_token(ctx->head,
-			new_tok(&ctx->s[start], *ctx->i - start, ctx->expand)))
+	if (!append_token(ctx->head, new_tok(&ctx->s[start], *ctx->i - start,
+				ctx->expand)))
 		return (-1);
 	return (1);
 }

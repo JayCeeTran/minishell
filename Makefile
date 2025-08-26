@@ -2,7 +2,6 @@ NAME = minishell
 CFLAGS = -Wall -Wextra -Werror
 SRCS = minishell.c \
 	add_env_var_helpers.c \
-	own_test.c \
 	read_list.c \
 	built_in.c \
 	built_in_logic.c \

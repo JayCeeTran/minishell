@@ -8,22 +8,17 @@ static void	expand_quotes(char c, int *in_single, int *in_double)
 		*in_double = !*in_double;
 }
 
-static int	expand_status_var(char **result, t_data *data, int *i)
+static void	expand_status_var(char **result, t_data *data, int *i)
 {
 	char	*val;
 
 	val = ft_itoa(data->status);
-	if (!val)
-		return (-1);
 	*result = ft_strjoin_free(*result, val);
-	if (!(*result))
-		return (-1);
 	free(val);
 	(*i)++;
-	return (1);
 }
 
-static int	expand_env_var(char **result, char *input, t_data *data, int *i)
+static void	expand_env_var(char **result, char *input, t_data *data, int *i)
 {
 	int		start;
 	char	*key;
@@ -33,27 +28,19 @@ static int	expand_env_var(char **result, char *input, t_data *data, int *i)
 	while (input[*i] && is_valid_var_char(input[*i]))
 		(*i)++;
 	key = ft_substr(input, start, *i - start);
-	if (!key)
-		return (-1);
-	val = get_env_value(key, data->env);
+	val = get_env_value(key, data->my_env);
 	*result = ft_strjoin_free(*result, val);
-	if (!(*result))
-	{
-		free(key);
-		return (-1);
-	}
 	free(key);
 	(*i)--;
-	return (1);
 }
 
-static int	expand_dollar(char **result, char *input, t_data *data,
+static void	expand_dollar(char **result, char *input, t_data *data,
 		int *i)
 {
 	if (input[*i + 1] == '?')
-		return (expand_status_var(result, data, i));
+		expand_status_var(result, data, i);
 	else
-		return (expand_env_var(result, input, data, i));
+		expand_env_var(result, input, data, i);
 }
 
 char	*expand_node(char *input, t_data *data)
@@ -72,12 +59,9 @@ char	*expand_node(char *input, t_data *data)
 		if (input[i] == '\'' || input[i] == '"')
 			expand_quotes(input[i], &in_single, &in_double);
 		else if (input[i] == '$' && !in_single && input[i + 1])
-		{
-			if (expand_dollar(&result, input, data, &i) == -1)
-				return (NULL);
-		}
-		else if (append_char(&result, input[i]) == -1)
-			return (NULL);
+			expand_dollar(&result, input, data, &i);
+		else
+			append_char(&result, input[i]);
 		i++;
 	}
 	return (result);

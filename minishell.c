@@ -1,14 +1,18 @@
 #include "minishell.h"
 
-//volatile sig_atomic_t global = 0;
+volatile sig_atomic_t global = 0;
 
 void	control_c(int sig)
 {
-	(void)sig;
-	write(1, "\n", 1);
-	rl_replace_line("", 0);   // ctear what was typed so far
-    	rl_on_new_line();
-    	rl_redisplay(); 
+//	(void)sig;
+	global = sig;
+	if(global != 0)
+	{
+		write(1, "\n", 1);
+		rl_replace_line("", 0);   // ctear what was typed so far
+    		rl_on_new_line();
+    		rl_redisplay(); 
+	}
 }
 
 int	newline_input(char *s);
@@ -51,7 +55,7 @@ void	main_loop(t_data *data)
 		read_list(data);
 		data->lineno++;
 		free(input);
-		printf("status: %d\n", data->status);
+//		printf("status: %d\n", data->status);
 	}
 }
 

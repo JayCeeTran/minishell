@@ -15,13 +15,13 @@
 # include <curses.h>
 # include <term.h>
 
-//extern volatile sig_atomic_t global;
+extern volatile sig_atomic_t global;
 
 // HOANGS PART!
 typedef struct s_token
 {
         char    *token;
-        int             is_operator;
+        int             is_op;
         struct s_token  *next;
 }       t_token;
 

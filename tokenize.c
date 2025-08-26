@@ -1,61 +1,107 @@
 #include "minishell.h"
 
-static int	tokenize_space(const char *s, int *i, t_token **head)
+static int	tokenize_space(t_dollar_ctx *ctx)
 {
-	if (s[*i] != ' ')
+	if (ctx->s[*ctx->i] != ' ')
 		return (0);
-	append_token(head, new_token_str(" ", 1, 3));
-	(*i)++;
+	if (!append_token(ctx->head, new_tok(" ", 1, 3)))
+		return (-1);
+	(*ctx->i)++;
 	return (1);
 }
 
-static int	tokenize_operator(const char *s, int *i, t_token **head)
+static int	tokenize_operator(t_dollar_ctx *ctx)
 {
-	if (!is_op_char(s[*i]))
+	if (!is_op_char(ctx->s[*ctx->i]))
 		return (0);
-	if ((s[*i] == '<' || s[*i] == '>') && s[*i + 1] == s[*i])
+	if (ctx->s[*ctx->i] == '>' && ctx->s[*ctx->i + 1] == ctx->s[*ctx->i])
 	{
-		append_token(head, new_token_str(&s[*i], 2, 1));
-		*i += 2;
+		if (!append_token(ctx->head, new_tok(&ctx->s[*ctx->i], 2, 1)))
+			return (-1);
+		*ctx->i += 2;
+	}
+	else if (ctx->s[*ctx->i] == '<' && ctx->s[*ctx->i + 1] == ctx->s[*ctx->i])
+	{
+		if (!append_token(ctx->head, new_tok("<<", 2, 1)))
+			return (-1);
+		ctx->heredoc_mode = 1;
+		*ctx->i += 2;
 	}
 	else
 	{
-		append_token(head, new_token_str(&s[*i], 1, 1));
-		(*i)++;
+		if (!append_token(ctx->head, new_tok(&ctx->s[*ctx->i], 1, 1)))
+			return (-1);
+		(*ctx->i)++;
 	}
 	return (1);
 }
 
-/* handle a normal unquoted word chunk until delimiter (space, op, quote, or $) */
-static void	tokenize_unquoted_word(const char *s, int *i, t_token **head)
+static int	tokenize_unquoted_word(t_dollar_ctx *ctx)
 {
 	int	start;
 
-	start = *i;
-	while (s[*i] && s[*i] != ' ' && !is_op_char(s[*i])
-		&& s[*i] != '\'' && s[*i] != '"' && s[*i] != '$')
-		(*i)++;
-	if (start < *i)
-		append_token(head, new_token_str(&s[start], *i - start, 0));
+	start = *ctx->i;
+	while (ctx->s[*ctx->i] && ctx->s[*ctx->i] != ' '
+		&& !is_op_char(ctx->s[*ctx->i]) && ctx->s[*ctx->i] != '\''
+		&& ctx->s[*ctx->i] != '"' && ctx->s[*ctx->i] != '$')
+		(*ctx->i)++;
+	if (start < *ctx->i)
+	{
+		if (!append_token(ctx->head, new_tok(&ctx->s[start],
+					*ctx->i - start, 0)))
+			return (-1);
+		else
+			return (1);
+	}
+	return (0);
 }
 
-/* main tokenize */
-t_token	*tokenize(const char *s)
+static int	tokenize_step(t_dollar_ctx *ctx)
 {
-	t_token	*head;
-	int		i;
+	int	ret;
 
+	ret = tokenize_space(ctx);
+	if (ret == -1)
+		return (-1);
+	if (ret)
+		return (1);
+	ret = tokenize_operator(ctx);
+	if (ret == -1)
+		return (-1);
+	if (ret)
+		return (1);
+	ret = tokenize_quotes_or_dollar(ctx);
+	if (ret == -1)
+		return (-1);
+	if (ret)
+		return (1);
+	if (!tokenize_unquoted_word(ctx))
+		return (-1);
+	return (1);
+}
+
+t_token	*tokenize(char *s)
+{
+	t_token			*head;
+	int				i;
+	int				ret;
+	t_dollar_ctx	ctx;
+
+	ctx.s = s;
 	head = NULL;
+	ctx.head = &head;
 	i = 0;
+	ctx.i = &i;
+	ctx.heredoc_mode = 0;
 	while (s[i])
 	{
-		if (tokenize_space(s, &i, &head))
-			continue;
-		if (tokenize_operator(s, &i, &head))
-			continue;
-		if (tokenize_quotes_or_dollar(s, &i, &head))
-			continue;
-		tokenize_unquoted_word(s, &i, &head);
+		ret = tokenize_step(&ctx);
+		if (ret == -1)
+		{
+			free_token(head);
+			return (NULL);
+		}
 	}
-	return (head);
+	ctx.heredoc_mode = 0;
+	return (*ctx.head);
 }

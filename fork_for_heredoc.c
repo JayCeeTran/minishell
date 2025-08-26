@@ -27,5 +27,6 @@ int	fork_heredoc(t_data *data, t_cmd *cmd)
 	}
 	else if(WIFEXITED(status))
 		data->status = WEXITSTATUS(status);
+	global = 0;
 	return(0);
 }

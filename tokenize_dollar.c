@@ -1,52 +1,63 @@
 #include "minishell.h"
 
-static void	tokenize_dollar_status(const char *s, int *i,
-				t_token **head, int expand, int start)
+static int	tokenize_dollar_pid(t_dollar_ctx *ctx)
 {
-	(*i)++;
-	append_token(head, new_token_str(&s[start], *i - start, expand));
+	(*ctx->i)++;
+	if (!append_token(ctx->head, new_tok("$$", 2, ctx->expand)))
+		return (-1);
+	return (1);
 }
 
-static void	tokenize_dollar_quoted(const char *s, int *i,
-				t_token **head, int expand, int start)
+static int	tokenize_dollar_quoted(t_dollar_ctx *ctx, int start)
 {
 	char	q;
 
-	q = s[(*i)++];
-	while (s[*i] && s[*i] != q)
-		(*i)++;
-	if (s[*i] == q)
-		(*i)++;
-	append_token(head, new_token_str(&s[start], *i - start, expand));
+	q = ctx->s[(*ctx->i)++];
+	while (ctx->s[*ctx->i] && ctx->s[*ctx->i] != q)
+		(*ctx->i)++;
+	if (ctx->s[*ctx->i] == q)
+		(*ctx->i)++;
+	if (!append_token(ctx->head,
+			new_tok(&ctx->s[start], *ctx->i - start, ctx->expand)))
+		return (-1);
+	return (1);
 }
 
-static void	tokenize_dollar_invalid(const char *s, t_token **head, int start)
+static int	tokenize_dollar_invalid(t_dollar_ctx *ctx, int start)
 {
-	append_token(head, new_token_str(&s[start], 1, 0));
+	if (!append_token(ctx->head, new_tok(&ctx->s[start], 1, 0)))
+		return (-1);
+	return (1);
 }
 
-static void	tokenize_dollar_var(const char *s, int *i,
-				t_token **head, int expand, int start)
+static int	tokenize_dollar_var(t_dollar_ctx *ctx, int start)
 {
-	while (s[*i] && is_valid_var_char(s[*i]))
-		(*i)++;
-	append_token(head, new_token_str(&s[start], *i - start, expand));
+	while (ctx->s[*ctx->i] && is_valid_var_char(ctx->s[*ctx->i]))
+		(*ctx->i)++;
+	if (!append_token(ctx->head,
+			new_tok(&ctx->s[start], *ctx->i - start, ctx->expand)))
+		return (-1);
+	return (1);
 }
 
-void	tokenize_dollar(const char *s, int *i, t_token **head, int outside_single)
+int	tokenize_dollar(t_dollar_ctx *ctx, int out_single)
 {
-	int	start;
-	int	expand;
+	int				start;
 
-	start = *i;
-	(*i)++;
-	expand = outside_single ? 2 : 0;
-	if (s[*i] == '?')
-		tokenize_dollar_status(s, i, head, expand, start);
-	else if (s[*i] == '\'' || s[*i] == '"')
-		tokenize_dollar_quoted(s, i, head, expand, start);
-	else if (!is_valid_var_char(s[*i]))
-		tokenize_dollar_invalid(s, head, start);
+	start = *ctx->i;
+	(*ctx->i)++;
+	if (out_single && !ctx->heredoc_mode)
+		ctx->expand = 2;
 	else
-		tokenize_dollar_var(s, i, head, expand, start);
+		ctx->expand = 0;
+	if (ctx->s[*ctx->i] == '?')
+		return (tokenize_dollar_status(ctx, start));
+	else if (ctx->s[*ctx->i] == '$')
+		return (tokenize_dollar_pid(ctx));
+	else if (ctx->s[*ctx->i] == '\'' || ctx->s[*ctx->i] == '"')
+		return (tokenize_dollar_quoted(ctx, start));
+	else if (!is_valid_var_char(ctx->s[*ctx->i]))
+		return (tokenize_dollar_invalid(ctx, start));
+	else
+		return (tokenize_dollar_var(ctx, start));
 }

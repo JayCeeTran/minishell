@@ -1,36 +1,45 @@
-#include "minishell.h"
+##include "minishell.h"
 
-
-static void merge_tokens(t_token *head)
+static int	merge_tokens(t_token *head)
 {
-	t_token *cur = head;
+	t_token	*cur;
+	t_token	*tmp;
 
+	cur = head;
 	while (cur && cur->next)
 	{
-		if ((cur->is_operator != 1 && cur->is_operator != 3) 
-			&& (cur->next->is_operator != 1 && cur->next->is_operator != 3))
+		if ((cur->is_op != 1 && cur->is_op != 3)
+			&& (cur->next->is_op != 1 && cur->next->is_op != 3))
 		{
+			if (cur->is_op == 4 || cur->next->is_op == 4)
+				cur->is_op = 4;
 			cur->token = ft_strjoin_free(cur->token, cur->next->token);
-			t_token *tmp = cur->next;
+			if (!cur->token)
+				return (-1);
+			tmp = cur->next;
 			cur->next = tmp->next;
 			free(tmp->token);
 			free(tmp);
-			continue;
+			continue ;
 		}
 		cur = cur->next;
 	}
+	return (1);
 }
 
-static void remove_space(t_token **head)
+static void	remove_space(t_token **head)
 {
-	t_token *cur = *head;
-	t_token *prev = NULL;
+	t_token	*cur;
+	t_token	*prev;
+	t_token	*tmp;
 
+	cur = *head;
+	prev = NULL;
 	while (cur)
 	{
-		if (cur->is_operator == 3 && ft_strncmp(cur->token, " ", 2) == 0)
+		if (cur->is_op == 3 && ft_strncmp(cur->token, " ", 2) == 0)
 		{
-			t_token *tmp = cur;
+			tmp = cur;
 			if (prev)
 				prev->next = cur->next;
 			else
@@ -38,15 +47,22 @@ static void remove_space(t_token **head)
 			cur = cur->next;
 			free(tmp->token);
 			free(tmp);
-			continue;
+			continue ;
 		}
 		prev = cur;
 		cur = cur->next;
 	}
 }
 
-void simplify_tokens(t_token **head)
+void	simplify_tokens(t_token **head)
 {
-	merge_tokens(*head);
+	if (!head)
+		return ;
+	if (merge_tokens(*head) == -1)
+	{
+		free_token(*head);
+		head = NULL;
+		return ;
+	}
 	remove_space(head);
 }

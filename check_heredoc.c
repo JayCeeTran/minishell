@@ -62,44 +62,14 @@ void	check_heredoc(t_redir *dir, t_data *data)
 					break;
 				if(compare_input_delimiter(input, limit, data))
 					break;
-				if(has_dollar(input))
-					input = expand_input(input, data->my_env);
+				if(!dir->expand)
+					input = expand_node(input, data);
 				write_into_heredoc(fd, input, data);
 			}
 			close(fd);
 		}
 		dir = dir->next;
 	}
-}
-
-char 	*expand_input(char *input, char **envp)
-{
-	int i;
-	char *result;
-
-	i = 0;
-	result = ft_strdup(""); //malloc error exit
-//	if(!result)
-//		close_free_exit("Error: Malloc failed!", 1, data, 1);
-        while (input[i])
-        {
-	        if (input[i] == '$' && input[i + 1])
-                {
-                     	int   start = ++i; //move declaration outside of the loop
-                        while (input[i] && is_valid_var_char(input[i]))
-                                i++;
-                        char    *key = ft_substr(input, start, i - start);
-                        char    *val = get_env_value(key, envp); // same and malloc error exit
-                        result = ft_strjoin_free(result, val); // malloc error exit
-                        free(key);
-                        i--;
-                }
-                else
-                        append_char(&result, input[i]);
-                i++;
-        }
-	free(input);
-        return (result);
 }
 
 void	print_error_msg(t_data *data, char *delimiter, int lineno)

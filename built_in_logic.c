@@ -41,9 +41,9 @@ int		built_ins_parent(t_data *data, t_cmd *cmd)
 	{
 		if(ft_strcmp(cmd->cmd[0], built_ins[i].name) == 0)
 		{
-			if(!file_permission_loop(data, cmd->redirections))
+			if(!file_permission_loop(data, cmd->redirs))
 			{
-				redirections(data->pipe_pointers, data, 0);
+				redirs(data->pipe_pointers, data, 0);
 				if(built_ins[i].func(data, cmd, 1))
 					data->status = 0; //check if this is right place and right code
 			}

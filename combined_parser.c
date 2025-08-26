@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   combined_parser.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hoale <hoale@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 10:43:09 by hoale             #+#    #+#             */
+/*   Updated: 2025/08/26 14:01:20 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 static int	is_closed_quotes(char *cmd)
@@ -48,17 +60,29 @@ static int	valid_redirs(t_token *tokens)
 	return (1);
 }
 
-//Check if there is no pipe operator at begin and the end of the list
-static int	no_pipe_edges(t_token *tokens)
+static int	valid_pipes(t_token *tokens)
 {
-	t_token	*last;
+	t_token	*cur;
+	t_token	*last_pipe;
+	t_token	*seg_start;
 
-	if (tokens->is_op == 1 && !ft_strncmp(tokens->token, "|", 2))
-		return (0);
-	last = tokens;
-	while (last->next)
-		last = last->next;
-	if (last->is_op == 1 && !ft_strncmp(last->token, "|", 2))
+	cur = tokens;
+	last_pipe = NULL;
+	while (cur)
+	{
+		if (cur->is_op == 1 && !ft_strncmp(cur->token, "|", 2))
+		{
+			if (last_pipe)
+				seg_start = last_pipe->next;
+			else
+				seg_start = tokens;
+			if (is_empty_segment(seg_start, cur))
+				return (0);
+			last_pipe = cur;
+		}
+		cur = cur->next;
+	}
+	if (last_pipe && is_empty_segment(last_pipe->next, NULL))
 		return (0);
 	return (1);
 }
@@ -72,7 +96,7 @@ static int	below_max_heredoc(t_token *tokens)
 	count_heredoc = 0;
 	while (ptr->next)
 	{
-		if (ptr->is_op == 1 && ft_strncmp(ptr->token, ">>", 3) == 0)
+		if (ptr->is_op == 1 && ft_strncmp(ptr->token, "<<", 3) == 0)
 			count_heredoc++ ;
 		ptr = ptr->next;
 	}
@@ -92,8 +116,12 @@ t_cmd	*parse(char *line, t_data *data)
 	tokens = tokenize(line);
 	if (!tokens)
 		return (NULL);
-	if (!valid_redirs(tokens) || !no_pipe_edges(tokens)
-		|| !below_max_heredoc(tokens))
+	if(!below_max_heredoc(tokens))
+        {
+                free_all_exit("bash: maximum here-document count exceeded\n", 1, data, 1);
+                return(NULL);
+        }
+	if (!valid_redirs(tokens) || !valid_pipes(tokens))
 	{
 		free_token(tokens);
 		return (write(2, "Error2\n", 7), NULL);

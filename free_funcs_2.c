@@ -9,7 +9,7 @@ void    free_list(t_data *data)
                 cur = data->list;
                 data->list = data->list->next;
                 free_split(cur->cmd);
-                free_redir(cur->redirections);
+                free_redir(cur->redirs);
                 free(cur);
         }
         data->list = NULL;

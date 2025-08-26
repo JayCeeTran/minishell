@@ -16,7 +16,7 @@ void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
 	
 	flag_pipe = 0;
 	path = NULL;
-	cur = cmd->redirections;
+	cur = cmd->redirs;
 	if(cmd->pipe)
 		flag_pipe = 1;
 	while(cur)
@@ -26,7 +26,7 @@ void	children(t_data *data, t_cmd *cmd, t_pipes *pipes)
 			close_free_exit(NULL, 1, data, 0);
 		cur = cur->next;
 	}
-	redirections(pipes, data, flag_pipe);
+	redirs(pipes, data, flag_pipe);
 	if(!built_ins(data, cmd))
 		path = find_bin(cmd, data);
 	close_pipes_and_files(data, data->first);

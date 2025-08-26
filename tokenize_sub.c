@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokenize_sub.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hoale <hoale@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/26 10:44:26 by hoale             #+#    #+#             */
+/*   Updated: 2025/08/26 13:56:17 by jtran            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	is_op_char(char c)
@@ -47,5 +59,19 @@ int	tokenize_dollar_status(t_dollar_ctx *ctx, int start)
 	if (!append_token(ctx->head,
 			new_tok(&ctx->s[start], *ctx->i - start, ctx->expand)))
 		return (-1);
+	return (1);
+}
+
+int	is_empty_segment(t_token *start, t_token *end)
+{
+	t_token	*tmp;
+
+	tmp = start;
+	while (tmp && tmp != end)
+	{
+		if (tmp->is_op != 3)
+			return (0);
+		tmp = tmp->next;
+	}
 	return (1);
 }

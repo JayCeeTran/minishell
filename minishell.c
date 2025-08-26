@@ -9,7 +9,7 @@ void	control_c(int sig)
 	if(global != 0)
 	{
 		write(1, "\n", 1);
-		rl_replace_line("", 0);   // ctear what was typed so far
+		rl_replace_line("", 0);
     		rl_on_new_line();
     		rl_redisplay(); 
 	}
@@ -28,8 +28,18 @@ int	main(int ac, char **argv, char **env)
 	my_envp(&data);
 	find_path(&data, env);
 	main_loop(&data);
+	ft_putstr_fd("are we here\n", 2);
 	free_all_exit(NULL, 0, &data, 1);
 	return(0);
+}
+
+static void	input_null(t_data *data)
+{
+	free_split(data->path);
+        free_split(data->my_env);
+        free_split(data->export_list);
+//	unlink("heredoc");
+	exit(0);
 }
 
 void	main_loop(t_data *data)
@@ -44,14 +54,12 @@ void	main_loop(t_data *data)
 		signal(SIGQUIT, SIG_IGN);
 		input = readline("minishell$ ");
 		if(!input)
-			break;
+			input_null(data);
 		if(newline_input(input))
 			continue;
 		if(input)
 			add_history(input); //need to clean up memory?
 		data->list = parse(input, data);
-	//	if(!data->list)
-	//		free_all_exit(NULL, 1, data, 1);
 		read_list(data);
 		data->lineno++;
 		free(input);

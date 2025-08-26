@@ -33,7 +33,7 @@ void	fill_fds(t_redir *redir, t_data *data)
 	}
 }
 
-void	redirections(t_pipes *pipes, t_data *data, int flag)
+void	redirs(t_pipes *pipes, t_data *data, int flag)
 {
 	if(data->first != 1)
 		dup2(pipes->cur_p[0], 0); 

@@ -13,10 +13,10 @@ static void	free_cmd(t_cmd *cmd)
 			free(cmd->cmd[i++]);
 		free(cmd->cmd);
 	}
-	while (cmd->redirections)
+	while (cmd->redirs)
 	{
-		t_redir *tmp = cmd->redirections;
-		cmd->redirections = cmd->redirections->next;
+		t_redir *tmp = cmd->redirs;
+		cmd->redirs = cmd->redirs->next;
 		free(tmp->redir);
 		free(tmp->file);
 		free(tmp);

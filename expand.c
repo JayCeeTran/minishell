@@ -28,7 +28,7 @@ char	*get_env_value(char *key, char **envp)
 	return ("");
 }
 
-static int	has_dollar(char *s)
+int	has_dollar(char *s)
 {
 	int	i;
 

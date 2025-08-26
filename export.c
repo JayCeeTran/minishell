@@ -6,7 +6,7 @@
 /*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 15:33:43 by jtran             #+#    #+#             */
-/*   Updated: 2025/08/26 16:10:17 by jtran            ###   ########.fr       */
+/*   Updated: 2025/08/26 18:03:58 by jtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,7 @@ int	add_env_var(t_data *data, char *s, int parent)
 	return (1);
 }
 
-int	malloc_new_list(t_data *data, char ***new_env, int parent,
-		char **list)
+int	malloc_new_list(t_data *data, char ***new_env, int parent, char **list)
 {
 	int	e_size;
 
@@ -85,6 +84,7 @@ int	add_to_export_or_error(t_data *data, int compare, char *s, int parent)
 	}
 	else if (compare == -2)
 	{
+		ft_putstr_fd("here\n", 2);
 		add_to_export_list(data, s, parent);
 		return (1);
 	}

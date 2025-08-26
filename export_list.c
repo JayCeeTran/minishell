@@ -6,7 +6,7 @@
 /*   By: jtran <jtran@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/26 15:33:38 by jtran             #+#    #+#             */
-/*   Updated: 2025/08/26 15:33:40 by jtran            ###   ########.fr       */
+/*   Updated: 2025/08/26 17:59:09 by jtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void	add_to_export_list(t_data *data, char *s, int parent)
 		if (!new_list[i++])
 			malloc_fail(data, new_list, parent);
 	}
+	ft_putstr_fd("hereeeeee2\n", 2);
 	newlist_to_data(data, new_list, i);
 }
 

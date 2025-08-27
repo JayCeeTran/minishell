@@ -1,0 +1,247 @@
+//////////			//////////
+//////////	BASIC ECHO 	//////////
+//////////	QUOTES		//////////
+
+echo					| just newline
+echo -n					| just new prompt
+echo hello 				| hello
+echo hello    a 			| hello a
+echo "hello a" 				| hello a
+echo "hello a" $USER 			| hello a juhatran
+echo "hello a"$USER 			| hello ajuhatran
+echo "hello a"$USER"hello" 		| hello ajuhatranhello
+echo "'$USER' "$USER"" 			| 'juhatran' juhatran
+echo '$USER' "$USER" $USER 		| $USER juhatran juhatran
+echo ''$USER'             "$USER"' 	| juhatran             "$USER"
+echo "hello a" $USER "hello" 		| hello a juhatran hello
+echo '"hello a" $USER "hello"' 		| "hello a" $USER "hello"
+echo "'"hell   o"   $USER   "hello   a"'" 	| 'hell o   juhatran   hello a'
+echo "hello $USERa$USER" 		| hello juhatran
+echo "hello $USER$USER" 		| hello juhatranjuhatran
+echo "hello $USER $USER" 		| hello juhatran juhatran
+echo "hello $USER.$USER" 		| hello juhatran.juhatran
+echo "$USER" '$USER' 			| juhatran $USER
+echo "'Hello $USER' "$USER hello"" 	| 'Hello juhatran' juhatran hello
+echo '"$USER"'$USER 			| "$USER"juhatran
+echo "hello world" > indir		| bash: indir: Is a directory | status 1
+echo <helloo				| no such file
+echo a''a				| aa
+echo a""a				| aa
+echo a" "a				| a a
+echo a "" a				| a  a
+echo a ' ' a				| a   a
+
+//////////			//////////
+//////////	BASIC CAT	//////////
+//////////	REDIRECT	//////////	
+
+cat infile 				| 1111 testfile
+cat infile infile infile 		| 1111 testfile | 1111 testfile | 1111 testfile
+cat <infile 				| 1111 testfile
+cat <infile <infile2 <infile3 		| 3333 testfile
+cat <infile infile2 			| 2222 testfile
+cat infile >out >out2 			| out2 "1111 testfile"
+cat infile >out infile2 		| out "1111 testfile | 2222 testfile"
+cat <infile >out <infile2 		| out "2222 testfile"
+cat -e infile | cat -e | cat -e > out 	| 1111 testfile$$$
+cat -e infile | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e | cat -e |  cat -e > out 				| 1111 testfile$$$$$$$$$$$$$$$$$$
+cat <infile | cat -e > out 		| 1111 testfile$
+cat infile <infile2 |cat -e >out 	| 1111 testfile$
+cat <infile infile2 |cat -e >out 	| 2222 testfile$
+cat infile >out >out2 			| out2 "1111 testfile"
+cat infile | cat -e >>out >>out2 	| out2 "1111 testfile APPENDED"
+cat infile | cat -e >>out >out2 	| out2 "1111 testfile"
+cat ''					| '' no such file
+cat ''''				| '' no such file
+cat ''' '''				| ' '	nsf
+cat '					| error in minishell project unclosed quotes
+
+
+///////////			//////////
+///////////	NOFILE TESTS	//////////
+///////////			//////////
+
+cat nofile 		| cat: nofile: No such file or directory | status 1
+cat nofile infile 	| cat: nofile: No such file or directory | 1111 testfile | status 1
+cat <infile <nofile 	| -bash: nofile: No such file or directory
+cat infile <nofile 	| -bash: nofile: No such file or directory
+cat nofile >out 	| cat: nofile: No such file or directory
+cat <nofile >out	//doesnt make a file | -bash: nofile: No such file or directory
+cat >out <nofile	//makes a file | -bash: nofile: No such file or directory 
+cat infile nofile >out 	| out "1111 testfile" //cat: nofile: No such file or directory
+cat nofile infile >out 	| out "1111 testfile"  //cat: nofile: No such file or directory
+
+//////////			///////////
+//////////	NO PERMISSION	///////////
+//////////	INFILE		///////////
+
+cat infile		| cat: infile: Permission denied		| status 1
+cat <infile		| bash: infile: Permission denied
+cat infile | cat >out	| create out //cat: infile: Permission denied	| status 0
+cat <infile | cat >out	| create out //bash: infile: Permission denied
+cat <infile >out	| doesnt make a file //bash: infile: Permission denied |
+cat infile >out		| create out cat: infile: Permission denied	| status 1
+cat infile infile2 infile3 > out	| 2222 testfile | 3333 testfile | cat: infile: Permission denied	| status 1
+
+//////////	OUTFILE		///////////
+
+cat infile > out		| bash: out: Permission denied
+cat infile | cat -e > out	| bash: out: Permission denied
+
+//////////	BOTH FILES	///////////
+
+cat infile > out		| bash: out: Permission denied
+cat <infile >out		| bash: infile: Permission denied
+cat infile | cat infile 	| mixed output 
+cat infile infile2		| cat: infile: Permission denied | cat: infile2: Permission denied
+cat infile | cat > out		| bash: out: Permission denied | cat: infile: Permission denied
+
+//////////			///////////
+//////////	DIRECTORY TEST	///////////
+//////////			///////////
+
+//////////	DIR INFILE	///////////
+
+cat indir			| cat: indir: Is a directory
+cat <indir			| cat: -: Is a directory
+cat indir | cat > out		| makes out | cat: indir: Is a directory | status 0
+cat <indir | cat > out		| makes out | cat: -: Is a directory	| status 0
+grep 1111 indir			| grep: indir: Is a directory
+cat ./indir			| cat: ./indir: Is a directory
+cat indir/infile		| inside indir
+cat <indir/infile		| inside indir
+cat ./indir/infile		| inside indir
+cat <./indir/infile		| inside indir
+
+//////////	DIR OUTFILE	///////////
+
+cat infile | cat > outdir	| bash: outdir: Is a directory
+cat infile > outdir		| bash: outdir: Is a directory
+cat <infile >outdir		| bash: outdir: Is a directory
+cat infile > ./outdir		| bash: ./outdir: Is a directory
+echo "inside outdir"  >outdir/out 	| inside outdir
+echo "inside outdir"  >./outdir/out	| inside outdir
+echo "inside outdir"  >/outdir/out	| bash: /outdir/out: No such file or directory	| outdir has to exist before out is created
+
+//////////	DIR COMMAND	///////////
+
+./indir				| ./indir: is a directory | status 126
+./infile			| infile: Permission denied | status 126
+/indir/infile			| No such file or directory | status 127
+indir infile			| Command 'indir' not found, did you mean:
+cat infile | indir > out	| makes out | indir: command not found
+./indir infile			| bash: ./indir: Is a directory
+./indir infile | ./indir out	| make out | bash: ./indir: Is a directory | bash: ./indir: Is a directory
+
+//////////	EXECUTABLE TEST	///////////
+
+a.out				| a.out: command not found
+./a.out				| Hello world! in a.out
+indir/a.out			| Hello world! in a.out
+../a.out			| Hello world! in a.out
+/indir/a.out			| bash: /indir/a.out: No such file or directory
+./indir/a.out			| Hello world! in a.out
+.a.out				| a.out: command not found
+cat infile | a.out		| cat: infile: Permission denied | a.out: command not found
+cat infile3 | a.out		| a.out: command not found
+cat infile3 | ./a.out		| Hello World! in a.out
+./a.out	| ./a.out		| Hello world! in a.out
+
+//////////	BUILT INS	///////////
+
+//////////	PWD		///////////
+
+pwd				| /home/juhatran/42/merged_mini
+cd indir | pwd			| /home/juhatran/42/merged_mini
+pwd > out			| /home/juhatran/42/merged_mini
+pwd <infile3 | cat		| /home/juhatran/42/merged_mini
+pwd <infile3 | cat > out	| /home/juhatran/42/merged_mini
+echo hello | pwd		| /home/juhatran/42/merged_mini
+
+//////////	CD		///////////
+
+cd				| go to home
+cd indir			| /home/juhatran/42/merged_mini/indir
+cd ..				| /home/juhatran/42/merged_mini
+cd /home/juhatran		| /home/juhatran
+cd hello			| bash: cd: hello: No such file or directory
+cd infile3			| -bash: cd: infile3: Not a directory
+cd indir (no X)			| bash: cd: indir: Permission denied
+cd indir outdir			| bash: cd: too many arguments
+cd infile | cd indir		| both error messages | status 1
+cd outdir | cd indir		| one error msg | status 1
+cd outdir | cd outdir		| no msg | doesnt change dir | status 0
+cd >outdir			| bash: outdir: Is a directory
+cd >out				| creates file and moves to home
+cd <infile			| doesnt move error msg | status 1
+
+//////////	ENV		///////////
+
+env				| List of envs
+env > out			| List in out
+echo hello | env > out		| List in out
+cat infile3 | env > out		| List in out
+env | env			| 1 list of envs
+
+//////////	EXIT		///////////
+
+exit				| Closes program
+exit | exit			| basically nothing happens just exits children
+exit <infile
+
+//////////	EXPORT		///////////
+
+export myvar=hello		| myvar in env
+export				| prints export list
+export myvar			| myvar in export list
+export myvar=			| myvar= emptystring or string with '\0'
+export myvar. myvar2= myvar3=hel| sets all valid arguments | -bash: export: myvar.: not a valid identifier
+export myvar. | export myvar2	| doesnt add to list | status 0
+export myvar | export myvar2.	| doesnt add to list | status 1
+
+//////////	UNSET		///////////
+
+unset				| nothing happens
+unset myvar			| removes myvar from both list
+unset myvar=			| doesnt do anything
+unset myvar=hello		| doesnt remove the var
+unset myvar myvar2= myvar3	| unsets all valid arguments
+
+//////////	HEREDOC		///////////
+
+<<1 <<2 <<3			| takes inputs. nothing happens
+17 <<				| error msg
+<<1 <<2 <<3 | <<1 <<2 <<3	| nothing happens
+
+//////////	BUGS		///////////
+
+$hello 
+free tokens
+test multiple heredocs with other redirs
+pressing control d while heredoc | bash: warning: here-document at line 1 delimited by end-of-file (wanted `token')
+check why segfaults if only EOF at heredoc
+need to add 139 segfaults
+ check if school computers print exit at exit cmd
+free after heredocs errors too many
+cat <<1 <<2 <<#			| syntax error
+ech$a
+env -i
+
+//////////			///////////
+//////////	OTHER TESTS	///////////
+//////////			///////////
+
+test all builts ins with no arguments
+sleep 3 | sleep 5 (sleeps 5 sec)
+yes | head -n 1 (1 y) | head -n 10 (10 y)
+
+./minishell then ./minishell	| should open another program 
+
+cat <<infile
+> $USER
+> '$USER'
+> "$USER"
+> infile
+juhatran
+'juhatran'
+"juhatran"

@@ -1,5 +1,5 @@
 NAME = minishell
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -g2 -Wall -Wextra -Werror
 SRCS = minishell.c \
 	add_env_var_helpers.c \
 	read_list.c \
@@ -11,6 +11,7 @@ SRCS = minishell.c \
 	children.c \
 	close_fds.c \
 	cut_path_to_bin.c \
+	create_pwd_if_doesnt_exist.c \
 	env_strlen.c \
 	error_funcs.c \
 	error_funcs_2.c \
@@ -34,6 +35,7 @@ SRCS = minishell.c \
 	initialize_struct.c \
 	is_path_valid.c \
 	my_env.c \
+	path_in_env.c \
 	print_export.c \
 	sort_my_env_to_print.c \
 	unset.c \

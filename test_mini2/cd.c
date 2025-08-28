@@ -72,6 +72,7 @@ void	change_dir_helper(t_data *data, char *opwd, int parent)
 	i = 0;
 	check1 = 0;
 	check2 = 0;
+	create_pwd_if_doesnt_exist(data, parent);
 	while (data->my_env[i])
 	{
 		if (!check1)
@@ -90,16 +91,20 @@ char	*new_pwd(t_data *data, int parent, char *opwd, int index)
 	char	*dest;
 	int		env_size;
 	int		exit;
-
+	(void)parent;
+	(void)index;
+	
 	env_size = envp_size(data->my_env);
+	(void)env_size;
 	exit = 0;
+	(void)opwd;
 	dest = NULL;
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
 		exit = 1;
 	if (!exit)
 		dest = ft_strjoin("PWD=", pwd);
-	if (exit || !dest)
+	if (!dest || exit)
 	{
 		free(pwd);
 		make_my_env_freeable(data, opwd, index, env_size);

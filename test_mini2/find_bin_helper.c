@@ -19,7 +19,7 @@ char	*append_to_path(t_cmd *cmd, t_data *data)
 	char	*slash;
 
 	i = 0;
-	if(!data->path)
+	if(!data->path || !path_in_env(data))
 		return(NULL);
 	while (data->path[i])
 	{

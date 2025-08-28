@@ -40,14 +40,14 @@ void	create_opwd_pwd(t_data *data)
 		free(my_env);
 		err_msg_exit("Error: Malloc Failed!\n", 1);
 	}
-	my_env[1] = ft_strdup("OLDPWD=");
+/*	my_env[1] = ft_strdup("OLDPWD=");
 	if(!my_env[1])
 	{
 		free(my_env[0]);
 		free(my_env);
 		err_msg_exit("Error: Malloc Failed!\n", 1);
 	}
-	my_env[2] = NULL;
+*/	my_env[1] = NULL;
 	data->my_env = my_env;
 	data->export_list = create_export_list();
 }

@@ -101,6 +101,10 @@ typedef struct s_built_ins
 	char			*name;
 	int				(*func)(t_data *, t_cmd *, int parent);
 }					t_built_ins;
+
+void    swap_to_new_env(t_data *data, int i, char **new_env);
+void    create_pwd_if_doesnt_exist(t_data *data, int parent);
+int	path_in_env(t_data *data);
 int    sig_hook(void);
 void	heredoc_sig(int sig);
 int     no_slash_n_semicol(char *cmd);

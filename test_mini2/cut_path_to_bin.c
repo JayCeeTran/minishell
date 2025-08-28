@@ -17,7 +17,7 @@ void	find_path(t_data *data, char **env)
 	int	i;
 
 	i = 0;
-	if(!env)
+	if(!env[0])
 	{
 		data->path = NULL;
 		return;

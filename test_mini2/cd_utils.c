@@ -35,6 +35,11 @@ void	make_my_env_freeable(t_data *data, char *opwd, int index, int env_size)
 
 void	cd_error_msg(t_data *data, t_cmd *cmd, int error, int *status_changed)
 {
+	if(data->status)
+	{
+		*status_changed = 1;
+		return;
+	}
 	if (error)
 	{
 		write_bash();
@@ -59,6 +64,12 @@ int	cd_home(t_data *data, t_cmd *cmd, char *opwd, int parent)
 	if (!cmd->cmd[1])
 	{
 		find_home_from_my_env(data, &home);
+		if(!home)
+		{
+			ft_putstr_fd("bash: cd: HOME not set\n", 2);
+			data->status = 1;
+			return(1);
+		}
 		if (chdir(home) == 0)
 			change_dir_helper(data, opwd, parent);
 		else

@@ -12,13 +12,21 @@
 
 #include "minishell.h"
 
+volatile sig_atomic_t g_sigint = 0;
+
 void	control_c(int sig)
 {
 	(void)sig;
-	write(1, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
+	g_sigint = 2;
+}
+
+int sig_hook_parent(void)
+{
+	if(g_sigint == 2)
+	{
+		rl_done = 1;
+	}
+	return(1);
 }
 
 int			newline_input(char *s);
@@ -33,6 +41,7 @@ int	main(int ac, char **argv, char **env)
 	data.env = env;
 	data.lineno = 1;
 	data.list = NULL;
+	data.status = 0;
 	my_envp(&data);
 	find_path(&data, env);
 	main_loop(&data);
@@ -56,9 +65,16 @@ void	main_loop(t_data *data)
 	input = NULL;
 	while (1)
 	{
+		rl_event_hook = sig_hook_parent;
 		signal(SIGINT, control_c);
 		signal(SIGQUIT, SIG_IGN);
 		input = readline("minishell$ ");
+		if(g_sigint == 2)
+		{
+			data->status = 130;
+			g_sigint = 0;
+			continue;
+		}
 		if (!input)
 			input_null(data);
 		if (newline_input(input))

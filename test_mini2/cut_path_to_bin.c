@@ -17,6 +17,11 @@ void	find_path(t_data *data, char **env)
 	int	i;
 
 	i = 0;
+	if(!env)
+	{
+		data->path = NULL;
+		return;
+	}
 	while (env[i])
 	{
 		if (ft_strncmp("PATH=", env[i], 5) == 0)
@@ -28,6 +33,6 @@ void	find_path(t_data *data, char **env)
 		}
 		i++;
 	}
-	if (!env[i])
-		err_msg_exit("Error: No PATH= found\n", 1);
+//	if (!env[i])
+//		err_msg_exit("Error: No PATH= found\n", 1);
 }

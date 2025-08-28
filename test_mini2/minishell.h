@@ -28,6 +28,8 @@
 # include <term.h>
 # include <termios.h>
 
+extern volatile sig_atomic_t g_sigint;
+
 // HOANGS PART!
 typedef struct s_token
 {
@@ -99,7 +101,8 @@ typedef struct s_built_ins
 	char			*name;
 	int				(*func)(t_data *, t_cmd *, int parent);
 }					t_built_ins;
-
+int    sig_hook(void);
+void	heredoc_sig(int sig);
 int     no_slash_n_semicol(char *cmd);
 int		is_valid_var_char(char c);
 int		is_op_char(char c);

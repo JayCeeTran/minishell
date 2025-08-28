@@ -69,7 +69,15 @@ void	check_heredoc(t_redir *dir, t_data *data)
 			limit = open_heredoc(&start_lineno, dir->file, &fd, data);
 			while (1)
 			{
+				rl_event_hook = sig_hook;
 				input = readline("> ");
+				if(g_sigint == 1)
+				{
+					close(fd);
+					close_pipes_and_files(data, data->first);
+					g_sigint = 0;
+					free_all_exit(NULL, 130, data, 0);
+				}
 				if (input_null(input, data, dir->file, start_lineno))
 					break ;
 				if (compare_input_delimiter(input, limit, data))

@@ -14,14 +14,60 @@
 
 char	**create_export_list(void);
 
+void	create_opwd_pwd(t_data *data)
+{
+	char **my_env;
+	char *cwd;
+	char *pwd;
+
+	cwd = getcwd(NULL, 0);
+	if(!cwd)
+		err_msg_exit("Error: Malloc Failed!\n", 1);
+	pwd = ft_strjoin("PWD=", cwd);
+	free(cwd);
+	if(!pwd)
+		err_msg_exit("Error: Malloc Failed\n", 1);
+	my_env = malloc(3 * sizeof(char *));
+	if(!my_env)
+	{
+		free(pwd);
+		err_msg_exit("Error: Malloc Failed!\n", 1);
+	}
+	my_env[0] = ft_strdup(pwd);
+	free(pwd);
+	if(!my_env[0])
+	{
+		free(my_env);
+		err_msg_exit("Error: Malloc Failed!\n", 1);
+	}
+	my_env[1] = ft_strdup("OLDPWD=");
+	if(!my_env[1])
+	{
+		free(my_env[0]);
+		free(my_env);
+		err_msg_exit("Error: Malloc Failed!\n", 1);
+	}
+	my_env[2] = NULL;
+	data->my_env = my_env;
+	data->export_list = create_export_list();
+}
+
 void	my_envp(t_data *data)
 {
 	int		env_size;
 	char	**my_env;
 	int		i;
 
-	env_size = envp_size(data->env);
+	if(!data->env[0])
+	{	
+		create_opwd_pwd(data);
+		return;
+	}
+	else
+		env_size = envp_size(data->env);
 	my_env = malloc((env_size + 2) * sizeof(char *));
+	if(!my_env)
+		err_msg_exit("Error: Malloc Failed!\n", 1);
 	i = 0;
 	while (i < env_size)
 	{
@@ -29,7 +75,7 @@ void	my_envp(t_data *data)
 		if (!my_env[i])
 		{
 			free_split(my_env);
-			err_msg_exit("Error: Malloc failed!\n", 1);
+			err_msg_exit("Error: Malloc Failed!\n", 1);
 		}
 		i++;
 	}

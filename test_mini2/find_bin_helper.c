@@ -19,6 +19,8 @@ char	*append_to_path(t_cmd *cmd, t_data *data)
 	char	*slash;
 
 	i = 0;
+	if(!data->path)
+		return(NULL);
 	while (data->path[i])
 	{
 		slash = ft_strjoin(data->path[i], "/");

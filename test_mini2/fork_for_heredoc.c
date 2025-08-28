@@ -12,6 +12,23 @@
 
 #include "minishell.h"
 
+void	heredoc_sig(int sig)
+{
+	if(sig == SIGINT)
+	{
+		g_sigint = 1;
+	}
+}
+
+int	sig_hook(void)
+{
+	if(g_sigint == 1)
+	{
+		rl_done = 1;
+	}
+	return(0);
+}
+
 static void	exit_program(t_data *data)
 {
 	close_pipes_and_files(data, data->first);
@@ -20,7 +37,7 @@ static void	exit_program(t_data *data)
 
 void	prompt_heredoc(t_data *data, t_redir *redir)
 {
-	signal(SIGINT, SIG_DFL);
+	signal(SIGINT, heredoc_sig);
 	signal(SIGQUIT, SIG_IGN);
 	check_heredoc(redir, data);
 	close_pipes_and_files(data, data->first);
@@ -64,7 +81,6 @@ int	fork_heredoc(t_data *data, t_cmd *cmd)
 			if (was_there_a_signal(data, pid))
 				return (1);
 			check = 1;
-			//signal(SIGINT, SIG_DFL);
 		}
 		cur = cur->next;
 	}
